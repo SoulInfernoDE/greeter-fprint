@@ -282,3 +282,6 @@ msgstr "Bitte Passwort verwenden"
 
 msgid "Fingerprint recognised"
 msgstr "Fingerabdruck erkannt"
+
+msgid "No fingerprint enrolled"
+msgstr "Kein Fingerabdruck hinterlegt"
