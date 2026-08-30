@@ -75,16 +75,27 @@
   <path d="M108 112 c 8 8 36 8 44 0"
         fill="none" stroke="#d9800a" stroke-width="2.6" stroke-linecap="round"/>
 
-  <!-- raised left flipper (viewer's left): held up and *out*, past the body's
-       own outline. That last part matters - an arm the same colour as the body
-       that stays inside its silhouette reads as a stripe, not as a raised
-       flipper. A slightly lighter fill separates it where it crosses the
-       shoulder. The panel composites the Mint logo just beyond the tip, at
+  <!-- raised left flipper (viewer's left).
+
+       Anatomy first: on a penguin seen head-on both flippers leave the body
+       at the same height, one on each side of the shoulder. The right flipper
+       below attaches at (196,142); mirrored across this 260-wide viewBox that
+       is (64,142), and this one starts there. It used to start at (86,160) -
+       inside the body and lower - which is why it looked like it grew out of
+       the belly instead of the shoulder.
+
+       From that shoulder it sweeps up and *out*, past the body's own outline,
+       ending above head height: an arm the same colour as the body that stays
+       inside the silhouette reads as a stripe, not as a raised flipper. The
+       slightly lighter fill separates it where it crosses the shoulder.
+
+       The panel composites the Mint logo just beyond the tip, at
        HAND_X/HAND_Y (fractions of this viewBox); keep those in sync. -->
-  <path d="M86 160
-           C 70 140, 44 108, 32 80
-           C 26 65, 38 51, 51 60
-           C 63 69, 79 105, 95 133
-           C 104 148, 100 164, 86 160 Z"
+  <path d="M64 142
+           C 53 118, 37 88, 31 70
+           C 26 57, 40 48, 49 61
+           C 57 74, 71 116, 85 150
+           C 91 164, 81 177, 71 168
+           C 66 162, 62 151, 64 142 Z"
         fill="#2f3237"/>
 </svg>
