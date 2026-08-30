@@ -216,7 +216,13 @@ public class PromptBox : FadableBox
         name_label = new FadingLabel ("");
         name_label.override_font (Pango.FontDescription.from_string ("Ubuntu 13"));
         name_label.override_color (Gtk.StateFlags.NORMAL, { 1.0f, 1.0f, 1.0f, 1.0f });
-        name_label.halign = Gtk.Align.START;
+        /* Centred in its own column rather than pinned left: the name is the
+         * label of the box the user is picking, so it belongs in the middle of
+         * it. hexpand makes the column take the space left over by the avatar
+         * and the option button, xalign then centres the text inside it. */
+        name_label.halign = Gtk.Align.FILL;
+        name_label.hexpand = true;
+        name_label.xalign = 0.5f;
         name_label.valign = Gtk.Align.START;
         name_label.vexpand = false;
         name_label.margin_left = 2;
@@ -276,7 +282,8 @@ public class PromptBox : FadableBox
         small_name_label.override_color (Gtk.StateFlags.NORMAL, { 1.0f, 1.0f, 1.0f, 1.0f });
         small_name_label.valign = Gtk.Align.CENTER;
         small_name_label.yalign = 0.5f;
-        small_name_label.xalign = 0.0f;
+        small_name_label.xalign = 0.5f;
+        small_name_label.hexpand = true;
         small_name_label.margin_left = 2;
         small_name_label.set_size_request (-1, grid_size);
         small_name_label.show ();

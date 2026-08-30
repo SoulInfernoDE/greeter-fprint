@@ -77,25 +77,29 @@
 
   <!-- raised left flipper (viewer's left).
 
-       Anatomy first: on a penguin seen head-on both flippers leave the body
-       at the same height, one on each side of the shoulder. The right flipper
-       below attaches at (196,142); mirrored across this 260-wide viewBox that
-       is (64,142), and this one starts there. It used to start at (86,160) -
-       inside the body and lower - which is why it looked like it grew out of
-       the belly instead of the shoulder.
+       Anatomy first: on a penguin seen head-on both flippers leave the body at
+       the same height, one either side of the shoulder, and both sit in the
+       dark band between the body outline and the white front - never on the
+       white itself. The right flipper attaches at (196,142); mirrored across
+       this 260-wide viewBox that is (64,142), and this one starts there.
 
-       From that shoulder it sweeps up and *out*, past the body's own outline,
-       ending above head height: an arm the same colour as the body that stays
-       inside the silhouette reads as a stripe, not as a raised flipper. The
-       slightly lighter fill separates it where it crosses the shoulder.
+       The white front's left edge runs x=81 at y=139, x=77 at y=149, x=74 at
+       y=160 (computed from the belly path, not guessed), so this flipper's
+       inner edge stays at x<=66 through its whole root - clear of the white by
+       a good ten units at every height.
 
-       The panel composites the Mint logo just beyond the tip, at
-       HAND_X/HAND_Y (fractions of this viewBox); keep those in sync. -->
-  <path d="M64 142
-           C 53 118, 37 88, 31 70
-           C 26 57, 40 48, 49 61
-           C 57 74, 71 116, 85 150
-           C 91 164, 81 177, 71 168
-           C 66 162, 62 151, 64 142 Z"
-        fill="#2f3237"/>
+       Same fill as the right flipper, #1f2124: they are the same body part and
+       should not be two different colours. Below the shoulder that makes it
+       merge into the body, exactly as the right one does; what reads as the
+       raised flipper is the part above, which leaves the body outline entirely.
+
+       The panel composites the Mint logo just beyond the tip, at HAND_X/HAND_Y
+       (fractions of this viewBox); keep those in sync. -->
+  <path d="M64 140
+           C 54 116, 40 88, 33 66
+           C 28 51, 45 42, 54 57
+           C 61 70, 66 106, 68 140
+           C 70 156, 60 166, 54 158
+           C 50 152, 58 148, 64 140 Z"
+        fill="#1f2124"/>
 </svg>
