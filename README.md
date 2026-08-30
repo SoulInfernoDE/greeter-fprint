@@ -1,65 +1,118 @@
+# greeter-fprint
 
-A slick-looking LightDM greeter
+A fork of [slick-greeter](https://github.com/linuxmint/slick-greeter) that makes
+fingerprint login say what it is doing — and then actually log you in.
 
-![Slick Greeter](https://www.linuxmint.com/tmp/blog/3254/thumb_slick.png)
+Unofficial. Not affiliated with, endorsed by, or supported by Linux Mint.
+Upstream's own README is kept as
+[README.slick-greeter.md](README.slick-greeter.md).
 
-# Configuration
+![The panel: Tux holding up the Mint logo, with the reader's message underneath](doc/panel.png)
 
-- The default configuration is stored in dconf under the schema x.dm.slick-greeter.
-- Distributions should set their own defaults using a glib override.
-- Users can create and modify /etc/lightdm/slick-greeter.conf, settings in this files take priority and overwrite dconf settings.
+## What it changes
 
-A configuration tool is available at https://github.com/linuxmint/lightdm-settings
+Three things go wrong with fingerprint login in the stock greeter, all from one
+cause: `pam_fprintd`'s messages are routed into the user entry's message list,
+which was built for something else.
 
-# Features
+- **They stack up**, one line per attempt and per hint.
+- **They arrive in English**, whatever the system locale says: `lightdm` never
+  calls `setlocale()`, so `pam_fprintd`'s own `gettext()` hands back the
+  untranslated msgid. No locale setting fixes this from the outside.
+- **They block the login.** Every message sets `unacknowledged_messages`, and
+  that flag is precisely what stops `authentication_complete_cb()` from starting
+  the session — so a successful scan left you looking at a "Log In" button you
+  had to click by hand.
 
-- Slick-Greeter is cross-distribution and should work pretty much anywhere.
-- All panel applets are embedded. No external indicators are launched or loaded by the greeter.
-- No settings daemon are launched or loaded by the greeter.
-- This greeter supports HiDPI.
-- Sessions are validated. If a default/chosen session isn't present on the system, the greeter scans for known sessions in /usr/share/xsessions and replaces the invalid session choice with a valid session.
-- You can take a screenshot by pressing PrintScrn. The screenshot is saved in /var/lib/lightdm/Screenshot.png.
+Fingerprint messages go to a panel of their own instead, centred under the user
+list, showing exactly one message at a time:
 
-# Credit
+| State | What you see |
+|---|---|
+| Waiting | Mint logo glows yellow, breathing |
+| Rejected | Logo flashes red for 1.5 s, then back to waiting |
+| Recognised | Logo glows green for 1.5 s, then the session starts |
+| Reader gave up | Tux swaps the logo for a "Passwort:" sign |
 
-- Slick Greeter started as a fork of Unity Greeter 16.04.2, a greeter developed for Ubuntu by Canonical, which used indicators and unity-settings-daemon.
+The password state is driven by PAM itself — a prompt arriving after the reader
+has been talking means `pam_fprintd` used up its `max-tries` — rather than by
+guessing the retry count.
 
-----
+The German comes from this project's own catalogue, so it is right whether or
+not an `fprintd` translation happens to be installed.
 
-Configuration file format for /etc/lightdm/slick-greeter.conf
+Two smaller fixes came along the way, both in upstream layout code: user names
+are centred in their entry rather than pinned to its top-left corner, and the
+active-session marker is centred on the box instead of on its first row — it was
+pinned to the top of the name row, which stops being the middle as soon as the
+box grows a row for the password prompt.
 
-    [Greeter]
-    # LightDM GTK+ Configuration
-    # Available configuration options listed below.
-    #
-    # activate-numlock=Whether to activate numlock. This features requires the installation of numlockx. (true or false)
-    # background=Background file to use, either an image path or a color (e.g. #772953)
-    # background-color=Background color (e.g. #772953), set before wallpaper is seen
-    # draw-user-backgrounds=Whether to draw user backgrounds (true or false)
-    # draw-grid=Whether to draw an overlay grid (true or false)
-    # show-hostname=Whether to show the hostname in the menubar (true or false)
-    # show-power=Whether to show the power indicator in the menubar (true or false)
-    # show-a11y=Whether to show the accessibility options in the menubar (true or false)
-    # show-keyboard=Whether to show the keyboard indicator in the menubar (true or false)
-    # show-clock=Whether to show the clock in the menubar (true or false)
-    # show-quit=Whether to show the quit menu in the menubar (true or false)
-    # logo=Logo file to use
-    # other-monitors-logo=Logo file to use for other monitors
-    # theme-name=GTK+ theme to use
-    # icon-theme-name=Icon theme to use
-    # font-name=Font to use
-    # xft-antialias=Whether to antialias Xft fonts (true or false)
-    # xft-dpi=Resolution for Xft in dots per inch
-    # xft-hintstyle=What degree of hinting to use (hintnone/hintslight/hintmedium/hintfull)
-    # xft-rgba=Type of subpixel antialiasing (none/rgb/bgr/vrgb/vbgr)
-    # onscreen-keyboard=Whether to enable the onscreen keyboard (true or false)
-    # high-contrast=Whether to use a high contrast theme (true or false)
-    # screen-reader=Whether to enable the screen reader (true or false)
-    # play-ready-sound=A sound file to play when the greeter is ready
-    # hidden-users=List of usernames (separated by semicolons) that are hidden until Ctr+Alt+Shift is pressed
-    # group-filter=List of groups that users must be part of to be shown (empty list shows all users)
-    # enable-hidpi=Whether to enable HiDPI support (on/off/auto)
-    # only-on-monitor=Sets the monitor on which to show the login window, -1 means "follow the mouse"
-    # stretch-background-across-monitors=Whether to stretch the background across multiple monitors (false by default)
-    # clock-format=What clock format to use (e.g., %H:%M or %l:%M %p)
-    
+## Requirements
+
+- LightDM, and a fingerprint setup that already works: `fprintd`,
+  `libpam-fprintd`, an enrolled finger, `pam_fprintd.so` in your auth stack.
+- slick-greeter's build dependencies: `valac`, `meson`, `libgtk-3-dev`,
+  `liblightdm-gobject-1-dev`, `libcanberra-dev`, `libpixman-1-dev`.
+
+On Linux Mint there is one more hurdle that has nothing to do with this fork:
+`libpam-fingwit` gates fingerprint auth at the login screen behind the GSettings
+key `org.x.fingwit login-enabled`, which defaults to false and has no GUI. The
+module reads it as **root**, so setting it as your own user changes nothing.
+[`doc/linux-mint.md`](doc/linux-mint.md) has the details and the one-line fix.
+
+## Build and install
+
+```bash
+meson setup build
+ninja -C build
+sudo ninja -C build install
+```
+
+Then point LightDM at it:
+
+```bash
+printf '[Seat:*]\ngreeter-session=greeter-fprint\n' | sudo tee /etc/lightdm/lightdm.conf.d/80-greeter-fprint.conf
+```
+
+LightDM reads `conf.d` when *it* starts, not per greeter launch, so this takes
+effect on the next reboot.
+
+The installed slick-greeter is deliberately left untouched and stays available
+as a fallback: if this greeter ever fails to start, delete that file from a TTY
+(Ctrl+Alt+F2) and restart `lightdm`.
+
+## Looking at it without logging out
+
+`GREETER_FPRINT_DEMO=1 greeter-fprint --test-mode` walks the panel through every
+state, feeding the real English `pam_fprintd` strings through the real
+classifier — so what you see is what a live reader produces, translation
+included.
+
+For the real greeter, PAM and reader included, in a window:
+
+```bash
+dm-tool add-nested-seat --screen 1280x900
+```
+
+## Configuration
+
+It reads exactly what slick-greeter reads — the `x.dm.slick-greeter` schema and
+`/etc/lightdm/slick-greeter.conf` — on purpose, so an existing greeter
+configuration (background, per-user backgrounds, theme, fonts) applies
+unchanged.
+
+## Licence
+
+GPL-3, like slick-greeter. See [COPYING](COPYING), and [COPYRIGHT.md](COPYRIGHT.md)
+for who holds what — including the session badges, which are CC-BY-3.0 and carry
+their own attribution requirement.
+
+Tux is the Linux mascot created by Larry Ewing; `data/tux-fprint.svg` is an
+original drawing of him. The Linux Mint logo is **not** in this repository: the
+panel loads the system's installed icon at runtime and uses it as a mask.
+
+## Related
+
+[screensaver-fprint](https://github.com/SoulInfernoDE/screensaver-fprint) does
+the same for the Cinnamon lock screen, and shares this project's artwork and
+translation catalogue.
