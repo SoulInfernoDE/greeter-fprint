@@ -39,16 +39,16 @@ install_data(
     install_dir: datadir / 'glib-2.0' / 'schemas',
 )
 
-install_data(
-    'slick-greeter.desktop',
-    install_dir: datadir / 'xgreeters',
-)
+# The greeter's own session file is files/usr/share/xgreeters/greeter-fprint.desktop.
+# slick-greeter.desktop is deliberately NOT installed: it belongs to the
+# upstream package, and that package is the fallback greeter if this one ever
+# fails to start. A fork has no business overwriting its own escape hatch.
 
 man_files = [
     'slick-greeter-set-keyboard-layout.1',
     'slick-greeter-check-hidpi.1',
     'slick-greeter-enable-tap-to-click.1',
-    'slick-greeter.8',
+    'greeter-fprint.8',
 ]
 
 install_man(man_files)
