@@ -40,10 +40,11 @@ public class FingerprintPanel : Gtk.Box
      * is a real (deliberate) delay on login. */
     public const uint FLASH_MS = 1500;
 
-    /* Where the raised flipper's tip is, as a fraction of tux-fprint.svg's
-     * viewBox. Keep in sync with the artwork. */
-    private const double HAND_X = 0.155;
-    private const double HAND_Y = 0.235;
+    /* Where the logo hangs, as a fraction of tux-fprint.svg's viewBox: just
+     * beyond the raised flipper's tip, above and to the left of the head.
+     * Keep in sync with the artwork. */
+    private const double HAND_X = 0.105;
+    private const double HAND_Y = 0.085;
 
     private const int TUX_WIDTH = 180;
 
@@ -51,10 +52,16 @@ public class FingerprintPanel : Gtk.Box
      * the drawing and covered Tux's face. */
     private const int LOGO_SIZE = (int) (TUX_WIDTH * 0.26);
 
+    /* Room for the glow, which now sits above and outside Tux's own outline
+     * and would otherwise be clipped by the drawing area. */
+    private const int TOP_PAD = (int) (LOGO_SIZE * 0.9);
+    private const int SIDE_PAD = (int) (LOGO_SIZE * 1.6);
+
     public signal void success_finished ();
 
     private Gtk.DrawingArea canvas;
     private Gtk.Label message_label;
+    private Gtk.CssProvider label_style;
 
     private Gdk.Pixbuf? tux = null;
     private Gdk.Pixbuf? logo = null;
@@ -104,8 +111,9 @@ public class FingerprintPanel : Gtk.Box
         }
 
         canvas = new Gtk.DrawingArea ();
-        canvas.set_size_request (TUX_WIDTH + 60,
-                                 (tux != null ? tux.get_height () : 200) + 20);
+        canvas.set_size_request (TUX_WIDTH + 2 * SIDE_PAD,
+                                 (tux != null ? tux.get_height () : 200)
+                                 + TOP_PAD + 12);
         canvas.draw.connect (on_draw);
         canvas.show ();
         add (canvas);
@@ -119,26 +127,13 @@ public class FingerprintPanel : Gtk.Box
 
         /* The greeter has no stylesheet of its own - every widget that needs
          * styling ships its own provider (see dash-entry.vala, toggle-box.vala),
-         * so this one does too. White on a shadow, because it is drawn over
-         * whatever wallpaper the user picked. */
-        try
-        {
-            var style = new Gtk.CssProvider ();
-            style.load_from_data ("""
-                label {
-                    color: #ffffff;
-                    font-size: 17px;
-                    font-weight: 500;
-                    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
-                }
-            """, -1);
-            message_label.get_style_context ().add_provider (
-                style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        }
-        catch (Error e)
-        {
-            warning ("greeter-fprint: could not style the message label: %s", e.message);
-        }
+         * so this one does too. The colour follows the state, same as the logo:
+         * the sentence and the glow are one signal, not two. The shadow is
+         * there because this is drawn over whatever wallpaper the user picked. */
+        label_style = new Gtk.CssProvider ();
+        message_label.get_style_context ().add_provider (
+            label_style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        apply_label_colour ();
 
         message_label.show ();
         add (message_label);
@@ -256,6 +251,7 @@ public class FingerprintPanel : Gtk.Box
                          * pam_fprintd retries on its own. */
                         state = FingerprintState.WAITING;
                         start_pulse ();
+                        apply_label_colour ();
                         queue_draw_canvas ();
                     }
                 }
@@ -264,6 +260,39 @@ public class FingerprintPanel : Gtk.Box
         }
 
         queue_draw_canvas ();
+    }
+
+    /* The message takes the same colour the logo has right now; PASSWORD is
+     * the one state with no signal colour, so it stays white. */
+    private void apply_label_colour ()
+    {
+        string colour;
+
+        switch (state)
+        {
+        case FingerprintState.FAILED:
+            colour = "#e63836";
+            break;
+        case FingerprintState.SUCCESS:
+            colour = "#3db857";
+            break;
+        case FingerprintState.PASSWORD:
+            colour = "#ffffff";
+            break;
+        default:
+            colour = "#ffcc1a";
+            break;
+        }
+
+        try
+        {
+            var css = "label { color: %s; font-size: 17px; font-weight: 500; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75); }".printf (colour);
+            label_style.load_from_data (css, -1);
+        }
+        catch (Error e)
+        {
+            warning ("greeter-fprint: could not style the message label: %s", e.message);
+        }
     }
 
     private void queue_draw_canvas ()
@@ -321,7 +350,7 @@ public class FingerprintPanel : Gtk.Box
         canvas.get_allocation (out alloc);
 
         var tux_x = (alloc.width - tux.get_width ()) / 2.0;
-        var tux_y = 10.0;
+        var tux_y = (double) TOP_PAD;
 
         Gdk.cairo_set_source_pixbuf (cr, tux, tux_x, tux_y);
         cr.paint ();
