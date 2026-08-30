@@ -558,9 +558,25 @@ public class MainWindow : Gtk.Window
             if (FingerprintMessages.classify (line, out kind, out display))
             {
                 if (kind == FingerprintMessageKind.FAILURE)
+                {
                     fingerprint_panel.show_failure (display);
+
+                    /* Reproduce what the reader really does: the retry message
+                     * follows the failure almost immediately. It must not eat
+                     * the red flash. */
+                    Timeout.add (120, () => {
+                        FingerprintMessageKind k2;
+                        string d2;
+                        if (FingerprintMessages.classify (
+                                "Place your finger on the reader again", out k2, out d2))
+                            fingerprint_panel.show_waiting (d2);
+                        return Source.REMOVE;
+                    });
+                }
                 else
+                {
                     fingerprint_panel.show_waiting (display);
+                }
             }
 
             return Source.CONTINUE;

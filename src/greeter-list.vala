@@ -946,9 +946,21 @@ public abstract class GreeterList : FadableBox
             }
             else
             {
-                /* Show an error if one wasn't provided */
-                if (!selected_entry.has_errors)
-                    show_message (_("Failed to authenticate"), true);
+                /* A fingerprint-only attempt that failed outright: the verdict
+                 * belongs in the panel, next to the finger the user just used,
+                 * not in the entry as "Failed to authenticate" - which reads
+                 * like a typed credential was rejected when nothing was
+                 * typed. */
+                if (fingerprint_active && !prompted && FingerprintPanel.instance != null)
+                {
+                    FingerprintPanel.instance.show_failure (_("Fingerprint not recognised"));
+                }
+                else
+                {
+                    /* Show an error if one wasn't provided */
+                    if (!selected_entry.has_errors)
+                        show_message (_("Failed to authenticate"), true);
+                }
 
                 /* Stop authentication */
                 show_authenticated (false);

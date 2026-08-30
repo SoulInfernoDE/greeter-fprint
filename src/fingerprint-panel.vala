@@ -64,6 +64,12 @@ public class FingerprintPanel : Gtk.Box
     private uint pulse_timer = 0;
     private uint flash_timer = 0;
 
+    /* A state change that arrived while a flash was on screen, to be applied
+     * when the flash is done. HIDDEN here means "nothing queued" - reset()
+     * clears the queue instead of going through it. */
+    private FingerprintState pending_state = FingerprintState.HIDDEN;
+    private string pending_text = "";
+
     public FingerprintPanel ()
     {
         Object (orientation: Gtk.Orientation.VERTICAL, spacing: 10);
@@ -174,10 +180,34 @@ public class FingerprintPanel : Gtk.Box
 
     private void set_state (FingerprintState new_state, string text)
     {
+        /* A flash owns the panel for its full FLASH_MS. Without this, the red
+         * one was never actually visible: pam_fprintd sends "Failed to match
+         * fingerprint" and, in the same breath, "Place your finger on the
+         * reader again" for the next try - and that second message used to
+         * put the panel straight back to yellow, milliseconds later.
+         *
+         * Anything arriving mid-flash is queued and applied when the flash
+         * ends. Two exceptions: another failure restarts the flash (the user
+         * did something new and deserves the feedback), and reset() is a hard
+         * stop that clears the queue. */
+        if (flash_timer != 0 && new_state != FingerprintState.HIDDEN
+            && new_state != FingerprintState.FAILED)
+        {
+            pending_state = new_state;
+            pending_text = text;
+            return;
+        }
+
         if (flash_timer != 0)
         {
             Source.remove (flash_timer);
             flash_timer = 0;
+        }
+
+        if (new_state == FingerprintState.HIDDEN)
+        {
+            pending_state = FingerprintState.HIDDEN;
+            pending_text = "";
         }
 
         state = new_state;
@@ -209,12 +239,25 @@ public class FingerprintPanel : Gtk.Box
                 }
                 else if (state == FingerprintState.FAILED)
                 {
-                    /* Back to waiting: pam_fprintd retries on its own, and the
-                     * next "place your finger" message would otherwise be the
-                     * only thing telling the user the reader is live again. */
-                    state = FingerprintState.WAITING;
-                    start_pulse ();
-                    queue_draw_canvas ();
+                    if (pending_state != FingerprintState.HIDDEN)
+                    {
+                        /* Whatever the reader said during the flash - almost
+                         * always "place your finger again", sometimes the
+                         * password fallback - now gets its turn. */
+                        var next_state = pending_state;
+                        var next_text = pending_text;
+                        pending_state = FingerprintState.HIDDEN;
+                        pending_text = "";
+                        set_state (next_state, next_text);
+                    }
+                    else
+                    {
+                        /* Nothing queued: back to waiting, because
+                         * pam_fprintd retries on its own. */
+                        state = FingerprintState.WAITING;
+                        start_pulse ();
+                        queue_draw_canvas ();
+                    }
                 }
                 return Source.REMOVE;
             });
