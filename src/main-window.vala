@@ -34,6 +34,7 @@ public class MainWindow : Gtk.Window
     private Gtk.Button back_button;
     private ShutdownDialog? shutdown_dialog = null;
     private bool do_resize;
+    private FingerprintPanel fingerprint_panel;
 
     public ListStack stack;
 
@@ -148,13 +149,36 @@ public class MainWindow : Gtk.Window
         back_button.clicked.connect (pop_list);
         align.add (back_button);
 
-        align = new Gtk.Alignment (0.0f, 0.5f, 0.0f, 1.0f);
+        /* yscale 0 instead of 1: the centred column now holds the user list
+         * *and* the fingerprint panel, and must keep its natural height so the
+         * two stay together in the middle. With yscale 1 the list stretched to
+         * full height and pushed the panel to the bottom edge of the screen. */
+        align = new Gtk.Alignment (0.0f, 0.5f, 0.0f, 0.0f);
         align.show ();
         hbox.add (align);
 
         stack = new ListStack ();
         stack.show ();
-        align.add (stack);
+
+        /* The fingerprint panel lives directly under the user list, inside the
+         * same centred column, so it is centred with it instead of being
+         * pinned to a screen edge. It starts hidden (no_show_all) and takes no
+         * space at all until the reader has something to say. */
+        var center_column = new Gtk.Box (Gtk.Orientation.VERTICAL, 20);
+        center_column.show ();
+        center_column.add (stack);
+
+        fingerprint_panel = new FingerprintPanel ();
+        FingerprintPanel.instance = fingerprint_panel;
+        center_column.add (fingerprint_panel);
+
+        /* Visual check without a reader: GREETER_FPRINT_DEMO=1 walks the panel
+         * through every state on a timer. Development aid only - it touches
+         * nothing but the panel, and does nothing unless the variable is set. */
+        if (Environment.get_variable ("GREETER_FPRINT_DEMO") != null)
+            start_fingerprint_demo ();
+
+        align.add (center_column);
 
         add_user_list ();
 
@@ -494,4 +518,53 @@ public class MainWindow : Gtk.Window
 
         login_box.sensitive = true;
     }
+
+    /* see GREETER_FPRINT_DEMO above.
+     *
+     * The demo deliberately feeds the *real* English strings pam_fprintd
+     * sends through the *real* classifier, so what it shows on screen is what
+     * a live reader produces - translation included - and not a hand-written
+     * imitation of it. */
+    private void start_fingerprint_demo ()
+    {
+        string[] script = {
+            "Place your right thumb on the fingerprint reader",
+            "Failed to match fingerprint",
+            "Swipe was too short, try again",
+            "__password__",
+            "__success__"
+        };
+
+        var step = 0;
+        Timeout.add (2200, () => {
+            var line = script[step];
+            step = (step + 1) % script.length;
+
+            if (line == "__password__")
+            {
+                fingerprint_panel.show_password_fallback (
+                    _("Please use your password"));
+                return Source.CONTINUE;
+            }
+
+            if (line == "__success__")
+            {
+                fingerprint_panel.show_success (_("Fingerprint recognised"));
+                return Source.CONTINUE;
+            }
+
+            FingerprintMessageKind kind;
+            string display;
+            if (FingerprintMessages.classify (line, out kind, out display))
+            {
+                if (kind == FingerprintMessageKind.FAILURE)
+                    fingerprint_panel.show_failure (display);
+                else
+                    fingerprint_panel.show_waiting (display);
+            }
+
+            return Source.CONTINUE;
+        });
+    }
+
 }

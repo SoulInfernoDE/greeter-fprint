@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Greeter Fprint
+Comment=Slick Greeter with a fingerprint panel
+Exec=greeter-fprint
+Type=Application
+X-Ubuntu-Gettext-Domain=greeter-fprint

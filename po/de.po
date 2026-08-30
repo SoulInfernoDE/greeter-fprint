@@ -240,3 +240,45 @@ msgstr "Erneut versuchen als %s"
 #: src/user-list.vala:892
 msgid "Login"
 msgstr "Anmelden"
+
+
+# greeter-fprint: fingerprint panel
+
+msgid "Fingerprint not recognised"
+msgstr "Fingerabdruck nicht erkannt"
+
+msgid "The reader timed out"
+msgstr "Zeitüberschreitung am Leser"
+
+msgid "Swiped too fast - once more, please"
+msgstr "Zu schnell gezogen – bitte noch einmal"
+
+msgid "Not centred - once more, please"
+msgstr "Nicht mittig – bitte noch einmal"
+
+msgid "Lift your finger and try again"
+msgstr "Finger anheben und noch einmal auflegen"
+
+msgid "Once more, please"
+msgstr "Bitte noch einmal"
+
+msgid "Place your %s on the reader"
+msgstr "Legen Sie Ihren %s auf den Leser"
+
+msgid "Swipe your %s across the reader"
+msgstr "Ziehen Sie Ihren %s über den Leser"
+
+msgid "Place your finger on the reader"
+msgstr "Legen Sie Ihren Finger auf den Leser"
+
+msgid "Swipe your finger across the reader"
+msgstr "Ziehen Sie Ihren Finger über den Leser"
+
+msgid "Waiting for the fingerprint reader"
+msgstr "Warte auf den Fingerabdruckleser"
+
+msgid "Please use your password"
+msgstr "Bitte Passwort verwenden"
+
+msgid "Fingerprint recognised"
+msgstr "Fingerabdruck erkannt"

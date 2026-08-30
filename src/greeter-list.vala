@@ -790,6 +790,14 @@ public abstract class GreeterList : FadableBox
     protected bool prompted = false;
     protected bool unacknowledged_messages = false;
 
+    /* Set as soon as a message is recognised as coming from the fingerprint
+     * reader, cleared when a fresh authentication starts. It is what tells
+     * authentication_complete_cb() that this login had no password typed into
+     * it and can therefore proceed without waiting for a click. */
+    protected bool fingerprint_active = false;
+    protected int fingerprint_failures = 0;
+    private bool fingerprint_login_pending = false;
+
     protected void connect_to_lightdm ()
     {
         SlickGreeter.singleton.show_message.connect (show_message_cb);
@@ -799,12 +807,50 @@ public abstract class GreeterList : FadableBox
 
     protected void show_message_cb (string text, LightDM.MessageType type)
     {
+        /* Fingerprint messages go to the panel, never into the entry's message
+         * list. Two reasons: they would otherwise stack up under each other
+         * (pam_fprintd sends one per attempt and per hint), and every one of
+         * them sets unacknowledged_messages - which is exactly what stops
+         * authentication_complete_cb() from logging the user straight in. */
+        FingerprintMessageKind kind;
+        string display;
+
+        if (FingerprintMessages.classify (text, out kind, out display))
+        {
+            fingerprint_active = true;
+
+            var panel = FingerprintPanel.instance;
+            if (panel != null)
+            {
+                if (kind == FingerprintMessageKind.FAILURE)
+                {
+                    fingerprint_failures++;
+                    panel.show_failure (display);
+                }
+                else
+                {
+                    panel.show_waiting (display);
+                }
+            }
+
+            return;
+        }
+
         unacknowledged_messages = true;
         show_message (text, type == LightDM.MessageType.ERROR);
     }
 
     protected virtual void show_prompt_cb (string text, LightDM.PromptType type)
     {
+        /* A prompt arriving after the reader has been talking means
+         * pam_fprintd has used up its max-tries and PAM has fallen through to
+         * the password. That is the moment Tux swaps the Mint logo in his hand
+         * for the "Passwort:" sign - it is driven by what PAM actually does,
+         * rather than by us trying to guess pam_fprintd's retry count. */
+        if (fingerprint_active && FingerprintPanel.instance != null)
+            FingerprintPanel.instance.show_password_fallback (
+                _("Please use your password"));
+
         /* Notify the greeter on what user has been logged */
         if (get_selected_id () == "*other" && manual_name == null)
         {
@@ -848,6 +894,23 @@ public abstract class GreeterList : FadableBox
 
         if (is_authenticated)
         {
+            /* A fingerprint login never goes through a prompt, so the stock
+             * condition below (prompted && !unacknowledged_messages) can never
+             * hold for one, and the greeter would sit on show_authenticated()
+             * waiting for a click on "Log In". Here the finger *is* the
+             * confirmation: flash the logo green, and start the session when
+             * that flash is done. */
+            if (fingerprint_active && !fingerprint_login_pending
+                && FingerprintPanel.instance != null)
+            {
+                fingerprint_login_pending = true;
+
+                var panel = FingerprintPanel.instance;
+                panel.show_success (_("Fingerprint recognised"));
+                panel.success_finished.connect (fingerprint_success_finished_cb);
+                return;
+            }
+
             /* Login immediately if prompted and user has acknowledged all messages */
             if (prompted && !unacknowledged_messages)
             {
@@ -893,10 +956,31 @@ public abstract class GreeterList : FadableBox
         }
     }
 
+    /* Runs when the green flash has had its full FLASH_MS on screen. */
+    private void fingerprint_success_finished_cb ()
+    {
+        var panel = FingerprintPanel.instance;
+        if (panel != null)
+            panel.success_finished.disconnect (fingerprint_success_finished_cb);
+
+        login_complete ();
+
+        if (SlickGreeter.singleton.test_mode || background.alpha == 1.0)
+            start_session ();
+        else
+            background.notify["alpha"].connect (background_loaded_cb);
+    }
+
     protected virtual void start_authentication ()
     {
         prompted = false;
         unacknowledged_messages = false;
+
+        fingerprint_active = false;
+        fingerprint_failures = 0;
+        fingerprint_login_pending = false;
+        if (FingerprintPanel.instance != null)
+            FingerprintPanel.instance.reset ();
 
         /* Reset manual username */
         manual_name = null;

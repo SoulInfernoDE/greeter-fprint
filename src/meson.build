@@ -13,6 +13,8 @@ slick_greeter_sources = files(
     'fadable.vala',
     'fadable-box.vala',
     'fading-label.vala',
+    'fingerprint-messages.vala',
+    'fingerprint-panel.vala',
     'flat-button.vala',
     'greeter-list.vala',
     'idle-monitor.vala',
@@ -63,7 +65,7 @@ vala_args = [
 ]
 
 executable(
-    'slick-greeter',
+    'greeter-fprint',
     slick_greeter_sources,
     dependencies: dependencies,
     include_directories: config_h_dir,

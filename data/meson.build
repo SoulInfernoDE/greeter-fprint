@@ -23,6 +23,7 @@ icon_files = [
     'shutdown.svg',
     'suspend_highlight.svg',
     'suspend.svg',
+    'tux-fprint.svg',
     'switcher_corner.png',
     'switcher_left.png',
     'switcher_top.png',
