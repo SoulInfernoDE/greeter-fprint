@@ -149,28 +149,22 @@ public class MainWindow : Gtk.Window
         back_button.clicked.connect (pop_list);
         align.add (back_button);
 
-        /* yscale 0 instead of 1: the centred column now holds the user list
-         * *and* the fingerprint panel, and must keep its natural height so the
-         * two stay together in the middle. With yscale 1 the list stretched to
-         * full height and pushed the panel to the bottom edge of the screen. */
-        align = new Gtk.Alignment (0.0f, 0.5f, 0.0f, 0.0f);
+        /* yscale 1, as upstream: GreeterList positions its own box from its
+         * allocated height (see box_y there, which compensates for the
+         * menubar), and the back-arrow button is centred in this same full
+         * height. Take the height away from the list and the two stop lining
+         * up - the arrow ends up above the box. The fingerprint panel is
+         * therefore NOT stacked under the list here; GreeterList places it
+         * itself, directly beneath the box it just positioned. */
+        align = new Gtk.Alignment (0.0f, 0.5f, 0.0f, 1.0f);
         align.show ();
         hbox.add (align);
 
         stack = new ListStack ();
         stack.show ();
 
-        /* The fingerprint panel lives directly under the user list, inside the
-         * same centred column, so it is centred with it instead of being
-         * pinned to a screen edge. It starts hidden (no_show_all) and takes no
-         * space at all until the reader has something to say. */
-        var center_column = new Gtk.Box (Gtk.Orientation.VERTICAL, 20);
-        center_column.show ();
-        center_column.add (stack);
-
         fingerprint_panel = new FingerprintPanel ();
         FingerprintPanel.instance = fingerprint_panel;
-        center_column.add (fingerprint_panel);
 
         /* Visual check without a reader: GREETER_FPRINT_DEMO=1 walks the panel
          * through every state on a timer. Development aid only - it touches
@@ -178,7 +172,7 @@ public class MainWindow : Gtk.Window
         if (Environment.get_variable ("GREETER_FPRINT_DEMO") != null)
             start_fingerprint_demo ();
 
-        align.add (center_column);
+        align.add (stack);
 
         add_user_list ();
 

@@ -126,8 +126,13 @@ public class PromptBox : FadableBox
          */
 
         active_indicator = new ActiveIndicator ();
-        active_indicator.valign = Gtk.Align.START;
-        active_indicator.margin_top = ((grid_size - ActiveIndicator.HEIGHT) / 2) + ActiveIndicator.MARGIN;
+        /* Centred on the whole box, not on its first row. Upstream pinned it
+         * to the top of the name row with a margin that centres it within one
+         * grid row - fine when the box was one row tall, but the box grows a
+         * row for the password prompt and the marker then sat up at the
+         * corner. It spans every row instead now; see update_active_span,
+         * which re-attaches it whenever a row is added or cleared. */
+        active_indicator.valign = Gtk.Align.CENTER;
         active_indicator.show ();
         box_grid.attach (active_indicator, COL_ACTIVE, last_row, 1, 1);
 
@@ -424,6 +429,7 @@ public class PromptBox : FadableBox
         });
 
         reset_last_row ();
+        update_active_span ();
         has_errors = false;
     }
 
@@ -500,6 +506,21 @@ public class PromptBox : FadableBox
         foreach_prompt_widget ((w) => { update_prompt_visibility (w); });
     }
 
+    /* Keeps the active marker spanning the full height of the box, so it stays
+     * centred on it as rows come and go. */
+    protected void update_active_span ()
+    {
+        if (active_indicator == null || active_indicator.get_parent () != box_grid)
+            return;
+
+        var rows = last_row - start_row + 1;
+        if (rows < 1)
+            rows = 1;
+
+        box_grid.remove (active_indicator);
+        box_grid.attach (active_indicator, COL_ACTIVE, start_row, 1, rows);
+    }
+
     protected void attach_item (Gtk.Widget w, bool add_style_class = true)
     {
         w.set_data ("prompt-box-widget", this);
@@ -508,6 +529,7 @@ public class PromptBox : FadableBox
 
         last_row += 1;
         box_grid.attach (w, COL_ENTRIES_START, last_row, COL_ENTRIES_WIDTH, 1);
+        update_active_span ();
 
         update_prompt_visibility (w);
         queue_resize ();

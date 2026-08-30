@@ -105,6 +105,8 @@ public abstract class GreeterList : FadableBox
     protected Mode mode = Mode.ENTRY;
 
     public const int BORDER = 4;
+    /* Distance between the bottom of the greeter box and Tux's head. */
+    public const int PANEL_GAP = 16;
     public const int BOX_WIDTH = 9; /* in grid_size blocks */
     public const int DEFAULT_BOX_HEIGHT = 3; /* in grid_size blocks */
 
@@ -183,10 +185,29 @@ public abstract class GreeterList : FadableBox
         add (fixed);
 
         greeter_box = new DashBox (background);
-        greeter_box.notify["base-alpha"].connect (() => { queue_draw (); });
+        greeter_box.notify["base-alpha"].connect (() => { greeter_box.queue_draw (); });
         greeter_box.show ();
         greeter_box.size_allocate.connect (greeter_box_size_allocate_cb);
         add_with_class (greeter_box);
+
+        /* The panel is created by MainWindow but lives here, in the same Fixed
+         * as the greeter box, because only this widget knows where that box
+         * ends up. Whichever list is built first takes it; the other one sees
+         * a panel that already has a parent and leaves it alone (see also
+         * allocate_fingerprint_panel, which only positions its own). */
+        if (FingerprintPanel.instance != null
+            && FingerprintPanel.instance.get_parent () == null)
+        {
+            fixed.add (FingerprintPanel.instance);
+
+            /* Showing a child of a Gtk.Fixed does not get us a fresh
+             * size_allocate on this widget, and that is where the panel is
+             * positioned - so without this it appeared with a 0x0 allocation
+             * at whatever spot it last had, i.e. not at all. */
+            FingerprintPanel.instance.notify["visible"].connect (() => {
+                queue_resize ();
+            });
+        }
 
         scroll_timer = new AnimateTimer (AnimateTimer.ease_out_quint, AnimateTimer.FAST);
         scroll_timer.animate.connect (animate_scrolling);
@@ -706,6 +727,41 @@ public abstract class GreeterList : FadableBox
         move_names ();
     }
 
+    /* The fingerprint panel is positioned here rather than packed into a box
+     * in MainWindow, because only this widget knows where the greeter box
+     * actually ended up: box_y compensates for the menubar and rounds to the
+     * grid. Stacking the panel under the list in MainWindow meant taking the
+     * list's full height away from it, which moved the box out from under the
+     * back-arrow button - the arrow is centred in the window, the box is not. */
+    private void allocate_fingerprint_panel (Gtk.Allocation box_allocation)
+    {
+        var panel = FingerprintPanel.instance;
+
+        if (panel == null || panel.get_parent () != fixed)
+            return;
+
+        int panel_width, panel_height;
+        panel.get_preferred_width (null, out panel_width);
+        panel.get_preferred_height (null, out panel_height);
+
+        /* Below everything the list can draw. The other users' entries are
+         * laid out under the box, and the list clips them to n_below grid rows
+         * (see draw()), so that is the first y where nothing of the list's own
+         * can appear. Measuring the entries' allocations instead looked
+         * tempting but gives stale values here - they are moved by
+         * move_names() in the same allocation cycle. */
+        var panel_allocation = Gtk.Allocation ();
+        panel_allocation.width = panel_width;
+        panel_allocation.height = panel_height;
+        panel_allocation.x = box_allocation.x
+            + (box_allocation.width - panel_width) / 2;
+        panel_allocation.y = box_allocation.y + box_allocation.height
+            + (int) (n_below * grid_size) + PANEL_GAP;
+
+        fixed.move (panel, panel_allocation.x, panel_allocation.y);
+        panel.size_allocate (panel_allocation);
+    }
+
     private void allocate_greeter_box ()
     {
         Gtk.Allocation allocation;
@@ -718,6 +774,8 @@ public abstract class GreeterList : FadableBox
         child_allocation.y = allocation.y + get_greeter_box_y ();
         fixed.move (greeter_box, child_allocation.x, child_allocation.y);
         greeter_box.size_allocate (child_allocation);
+
+        allocate_fingerprint_panel (child_allocation);
 
         foreach (var entry in entries)
         {
@@ -742,6 +800,16 @@ public abstract class GreeterList : FadableBox
 
         c.save ();
         fixed.propagate_draw (greeter_box, c); /* Always full alpha */
+
+        /* Same treatment for the panel: full alpha, and outside the clip below
+         * - that rectangle exists to cut off the scrolling user entries, and it
+         * reaches only n_below grid rows past the box, which is less than Tux
+         * is tall. Clipped in with them, he would lose his feet. */
+        if (FingerprintPanel.instance != null
+            && FingerprintPanel.instance.get_parent () == fixed)
+        {
+            fixed.propagate_draw (FingerprintPanel.instance, c);
+        }
         c.restore ();
 
         if (greeter_box.base_alpha != 0.0)
@@ -754,7 +822,7 @@ public abstract class GreeterList : FadableBox
 
             foreach (var child in fixed.get_children ())
             {
-                if (child != greeter_box)
+                if (child != greeter_box && child != FingerprintPanel.instance)
                     fixed.propagate_draw (child, c);
             }
 
