@@ -7,7 +7,11 @@ Unofficial. Not affiliated with, endorsed by, or supported by Linux Mint.
 Upstream's own README is kept as
 [README.slick-greeter.md](README.slick-greeter.md).
 
-![The panel: Tux holding up the Mint logo, with the reader's message underneath](doc/panel.png)
+![The panel cycling through its states: yellow while the reader waits, red for
+a rejected finger, green for a recognised one, then the "Passwort:" sign](doc/states.gif)
+
+Rendered with the panel's own drawing code, so the timings are the real ones:
+each flash holds for 1.5 s, and the yellow breathes while the reader waits.
 
 ## What it changes
 
@@ -46,6 +50,12 @@ are centred in their entry rather than pinned to its top-left corner, and the
 active-session marker is centred on the box instead of on its first row — it was
 pinned to the top of the name row, which stops being the middle as soon as the
 box grows a row for the password prompt.
+
+## In the real greeter
+
+Not a mockup - LightDM, PAM and the reader, in a nested seat:
+
+![greeter-fprint running in a nested LightDM session](doc/panel.png)
 
 ## Requirements
 
