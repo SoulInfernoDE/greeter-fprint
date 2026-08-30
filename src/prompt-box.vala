@@ -223,10 +223,15 @@ public class PromptBox : FadableBox
         name_label.halign = Gtk.Align.FILL;
         name_label.hexpand = true;
         name_label.xalign = 0.5f;
-        name_label.valign = Gtk.Align.START;
+        /* Centred on both axes, not just horizontally. The avatar sets this
+         * row's height, and with valign START (plus a top margin) the name sat
+         * against the avatar's top edge - centred left-to-right but visibly
+         * "up there". yalign matters as well as valign: the label is stretched
+         * to the row height by FILL, so the text needs centring inside it. */
+        name_label.valign = Gtk.Align.FILL;
+        name_label.yalign = 0.5f;
         name_label.vexpand = false;
         name_label.margin_left = 2;
-        name_label.margin_top = 4;
         name_label.set_size_request (-1, grid_size);
         name_label.show ();
         name_grid.attach (name_label, COL_NAME_LABEL, ROW_NAME, 1, 1);
