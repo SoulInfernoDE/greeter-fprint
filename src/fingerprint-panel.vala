@@ -121,7 +121,7 @@ public class FingerprintPanel : Gtk.Box
             style.load_from_data ("""
                 label {
                     color: #ffffff;
-                    font-size: 15px;
+                    font-size: 17px;
                     font-weight: 500;
                     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
                 }
