@@ -1,0 +1,240 @@
+# Vietnamese translation for slick-greeter
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the slick-greeter package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: slick-greeter\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2023-06-01 11:07+0100\n"
+"PO-Revision-Date: 2024-04-02 14:29+0000\n"
+"Last-Translator: thieninox <Unknown>\n"
+"Language-Team: Vietnamese <vi@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2026-01-08 15:42+0000\n"
+"X-Generator: Launchpad (build 99c00f518760bdd50fc6e353e7736d2fff8fba4a)\n"
+
+#: src/greeter-list.vala:303
+#, c-format
+msgid "Enter password for %s"
+msgstr "Nhập mật khẩu cho %s"
+
+#: src/greeter-list.vala:305
+msgid "Enter your username"
+msgstr "Nhập tên người dùng của bạn"
+
+#: src/greeter-list.vala:815 src/user-list.vala:720
+msgid "Password:"
+msgstr "Mật khẩu:"
+
+#: src/greeter-list.vala:817 src/user-list.vala:714
+msgid "Username:"
+msgstr "Tên người dùng:"
+
+#: src/greeter-list.vala:872
+msgid "Invalid password, please try again"
+msgstr "Mật khẩu không đúng, vui lòng thử lại"
+
+#: src/greeter-list.vala:883
+msgid "Failed to authenticate"
+msgstr "Không thể xác thực"
+
+#: src/greeter-list.vala:929
+msgid "Failed to start session"
+msgstr "Không thể bắt đầu phiên"
+
+#: src/greeter-list.vala:943
+msgid "Logging in..."
+msgstr "Đang đăng nhập…"
+
+#: src/main-window.vala:52
+msgid "Login Screen"
+msgstr "Màn hình đăng nhập"
+
+#: src/main-window.vala:113
+msgid "Back"
+msgstr "Quay lại"
+
+#: src/menubar.vala:324
+msgid "Power:"
+msgstr "Nguồn điện:"
+
+#: src/menubar.vala:374
+msgid "Accessibility"
+msgstr "Khả năng truy cập"
+
+#: src/menubar.vala:383
+msgid "Onscreen keyboard"
+msgstr "Bàn phím ảo"
+
+#: src/menubar.vala:388
+msgid "High Contrast"
+msgstr "Độ tương phản cao"
+
+#: src/menubar.vala:394
+msgid "Screen Reader"
+msgstr "Trình đọc màn hình"
+
+#: src/menubar.vala:406 src/menubar.vala:453
+msgid "Quit..."
+msgstr "Thoát..."
+
+#: src/menubar.vala:419 src/shutdown-dialog.vala:155
+msgid "Suspend"
+msgstr "Tạm dừng"
+
+#: src/menubar.vala:437 src/shutdown-dialog.vala:172
+msgid "Hibernate"
+msgstr "Ngủ đông"
+
+#: src/menubar.vala:476 src/menubar.vala:520 src/menubar.vala:544
+msgid "Keyboard layout:"
+msgstr "Bố cục bàn phím:"
+
+#: src/menubar.vala:532
+msgid "More layouts..."
+msgstr "Thêm bố cục..."
+
+#: src/prompt-box.vala:215
+msgid "Session Options"
+msgstr "Tuỳ chọn phiên làm việc"
+
+#: src/session-list.vala:34
+msgid "Select desktop environment"
+msgstr "Chọn môi trường máy tính chính"
+
+#: src/shutdown-dialog.vala:101
+msgid "Goodbye. Would you like to..."
+msgstr "Tạm biệt. Bạn có muốn..."
+
+#: src/shutdown-dialog.vala:105 src/shutdown-dialog.vala:207
+msgid "Shut Down"
+msgstr "Tắt máy"
+
+#: src/shutdown-dialog.vala:112
+msgid "Are you sure you want to shut down the computer?"
+msgstr "Bạn có chắc chắn muốn tắt máy không?"
+
+#: src/shutdown-dialog.vala:137
+msgid ""
+"Other users are currently logged in to this computer, shutting down now will "
+"also close these other sessions."
+msgstr ""
+"Những người dùng khác hiện đang đăng nhập vào máy tính này, việc tắt bây giờ "
+"cũng sẽ đóng các phiên khác này."
+
+#: src/shutdown-dialog.vala:190
+msgid "Restart"
+msgstr "Khởi động lại"
+
+#: src/slick-greeter.vala:749
+msgid "Show release version"
+msgstr "Hiển thị phiên bản phát hành"
+
+#: src/slick-greeter.vala:752
+msgid "Run in test mode"
+msgstr "Chạy ở chế độ thử nghiệm"
+
+#: src/slick-greeter.vala:768
+#, c-format
+msgid "Run '%s --help' to see a full list of available command line options."
+msgstr ""
+"Chạy lệnh '%s --help' để xem danh sách đầy đủ các tùy chọn dòng lệnh có sẵn."
+
+#: src/toggle-box.vala:109
+#, c-format
+msgid "%s (Default)"
+msgstr "%s (Mặc định)"
+
+#: src/user-list.vala:45
+msgid "Guest Session"
+msgstr "Phiên làm việc cho khách"
+
+#: src/user-list.vala:455
+msgid "Please enter a complete e-mail address"
+msgstr "Vui lòng nhập đầy đủ địa chỉ thư điện tử"
+
+#: src/user-list.vala:535
+msgid "Incorrect e-mail address or password"
+msgstr "Địa chỉ thư điện tử hay mật khẩu không đúng"
+
+#: src/user-list.vala:566
+msgid ""
+"If you have an account on an RDP or Citrix server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Nếu bạn có tài khoản trên RDP hay máy chủ Citrix, tính năng Đăng nhập từ xa "
+"cho phép bạn chạy các ứng dụng từ chính máy chủ đó."
+
+#: src/user-list.vala:568
+msgid ""
+"If you have an account on an RDP server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Nếu bạn có tài khoản trên máy chủ RDP, hệ thống Đăng nhập Từ xa sẽ cho phép "
+"bạn chạy ứng dụng từ chính máy chủ đó."
+
+#: src/user-list.vala:571
+msgid "Cancel"
+msgstr "Hủy"
+
+#: src/user-list.vala:572
+msgid "Set Up..."
+msgstr "Cài đặt..."
+
+#: src/user-list.vala:574
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Would you like "
+"to set up an account now?"
+msgstr ""
+"Bạn phải có tài khoản Đăng nhập từ xa dành cho Ubuntu thì mới có thể sử dụng "
+"được dịch vụ này. Bạn có muốn thiết đặt một tài khoản ngay bây giờ không?"
+
+#: src/user-list.vala:578
+msgid "OK"
+msgstr "Đồng ý"
+
+#: src/user-list.vala:579
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Visit "
+"uccs.canonical.com to set up an account."
+msgstr ""
+"Bạn phải có tài khoản Đăng nhập từ xa dành cho Ubuntu thì mới có thể sử dụng "
+"được dịch vụ này. Ghé thăm trang uccs.canonical.com để thiết đặt tài khoản."
+
+#: src/user-list.vala:698
+msgid "Server type not supported."
+msgstr "Loại máy chủ không được hỗ trợ."
+
+#: src/user-list.vala:739
+msgid "Domain:"
+msgstr "Miền:"
+
+#: src/user-list.vala:800
+msgid "Email address:"
+msgstr "Địa chỉ thư điện tử:"
+
+#: src/user-list.vala:844
+msgid "Log In"
+msgstr "Đăng nhập"
+
+#: src/user-list.vala:845
+#, c-format
+msgid "Login as %s"
+msgstr "Đăng nhập bằng %s"
+
+#: src/user-list.vala:849
+msgid "Retry"
+msgstr "Thử lại"
+
+#: src/user-list.vala:850
+#, c-format
+msgid "Retry as %s"
+msgstr "Thử lại theo như %s"
+
+#: src/user-list.vala:892
+msgid "Login"
+msgstr "Đăng nhập"

@@ -1,0 +1,240 @@
+# Spanish translation for slick-greeter
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the slick-greeter package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: slick-greeter\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2023-06-01 11:07+0100\n"
+"PO-Revision-Date: 2023-06-01 17:32+0000\n"
+"Last-Translator: Marcos Sánchez <Unknown>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2026-01-08 15:42+0000\n"
+"X-Generator: Launchpad (build 99c00f518760bdd50fc6e353e7736d2fff8fba4a)\n"
+
+#: src/greeter-list.vala:303
+#, c-format
+msgid "Enter password for %s"
+msgstr "Escriba la contraseña para %s"
+
+#: src/greeter-list.vala:305
+msgid "Enter your username"
+msgstr "Ingrese su nombre de usuario"
+
+#: src/greeter-list.vala:815 src/user-list.vala:720
+msgid "Password:"
+msgstr "Contraseña:"
+
+#: src/greeter-list.vala:817 src/user-list.vala:714
+msgid "Username:"
+msgstr "Nombre de usuario:"
+
+#: src/greeter-list.vala:872
+msgid "Invalid password, please try again"
+msgstr "Contraseña incorrecta, inténtelo de nuevo"
+
+#: src/greeter-list.vala:883
+msgid "Failed to authenticate"
+msgstr "Ha fallado la autenticación"
+
+#: src/greeter-list.vala:929
+msgid "Failed to start session"
+msgstr "Ha fallado el inicio de sesión"
+
+#: src/greeter-list.vala:943
+msgid "Logging in..."
+msgstr "Iniciando sesión en…"
+
+#: src/main-window.vala:52
+msgid "Login Screen"
+msgstr "Pantalla de inicio de sesión"
+
+#: src/main-window.vala:113
+msgid "Back"
+msgstr "Atrás"
+
+#: src/menubar.vala:324
+msgid "Power:"
+msgstr "Batería:"
+
+#: src/menubar.vala:374
+msgid "Accessibility"
+msgstr "Accesibilidad"
+
+#: src/menubar.vala:383
+msgid "Onscreen keyboard"
+msgstr "Teclado en pantalla"
+
+#: src/menubar.vala:388
+msgid "High Contrast"
+msgstr "Contraste alto"
+
+#: src/menubar.vala:394
+msgid "Screen Reader"
+msgstr "Lector de pantalla"
+
+#: src/menubar.vala:406 src/menubar.vala:453
+msgid "Quit..."
+msgstr "Salir..."
+
+#: src/menubar.vala:419 src/shutdown-dialog.vala:155
+msgid "Suspend"
+msgstr "Suspender"
+
+#: src/menubar.vala:437 src/shutdown-dialog.vala:172
+msgid "Hibernate"
+msgstr "Hibernar"
+
+#: src/menubar.vala:476 src/menubar.vala:520 src/menubar.vala:544
+msgid "Keyboard layout:"
+msgstr "Distribución del teclado:"
+
+#: src/menubar.vala:532
+msgid "More layouts..."
+msgstr "Más distribuciones..."
+
+#: src/prompt-box.vala:215
+msgid "Session Options"
+msgstr "Opciones de la sesión"
+
+#: src/session-list.vala:34
+msgid "Select desktop environment"
+msgstr "Seleccionar el entorno de escritorio"
+
+#: src/shutdown-dialog.vala:101
+msgid "Goodbye. Would you like to..."
+msgstr "Adiós. Tal vez le gustaría..."
+
+#: src/shutdown-dialog.vala:105 src/shutdown-dialog.vala:207
+msgid "Shut Down"
+msgstr "Apagar"
+
+#: src/shutdown-dialog.vala:112
+msgid "Are you sure you want to shut down the computer?"
+msgstr "¿Seguro que quiere apagar el equipo?"
+
+#: src/shutdown-dialog.vala:137
+msgid ""
+"Other users are currently logged in to this computer, shutting down now will "
+"also close these other sessions."
+msgstr ""
+"Cuidado: si apaga el equipo se cerrarán las sesiones de todos los usuarios."
+
+#: src/shutdown-dialog.vala:190
+msgid "Restart"
+msgstr "Reiniciar"
+
+#: src/slick-greeter.vala:749
+msgid "Show release version"
+msgstr "Mostrar el número de versión"
+
+#: src/slick-greeter.vala:752
+msgid "Run in test mode"
+msgstr "Ejecutar en modo de prueba"
+
+#: src/slick-greeter.vala:768
+#, c-format
+msgid "Run '%s --help' to see a full list of available command line options."
+msgstr ""
+"Ejecute «%s --help» para ver una lista completa de las opciones de la línea "
+"de órdenes."
+
+#: src/toggle-box.vala:109
+#, c-format
+msgid "%s (Default)"
+msgstr "%s (por defecto)"
+
+#: src/user-list.vala:45
+msgid "Guest Session"
+msgstr "Sesión de invitado"
+
+#: src/user-list.vala:455
+msgid "Please enter a complete e-mail address"
+msgstr "Escriba una dirección de correo completa"
+
+#: src/user-list.vala:535
+msgid "Incorrect e-mail address or password"
+msgstr "La dirección de correo o la contraseña son incorrectas"
+
+#: src/user-list.vala:566
+msgid ""
+"If you have an account on an RDP or Citrix server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Si tiene una cuenta en un servidor RDP o Citrix, el inicio de sesión remoto "
+"le permite ejecutar aplicaciones desde ese servidor."
+
+#: src/user-list.vala:568
+msgid ""
+"If you have an account on an RDP server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Si tiene una cuenta en un servidor RDP, el inicio de sesión remoto le "
+"permite ejecutar aplicaciones desde ese servidor."
+
+#: src/user-list.vala:571
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/user-list.vala:572
+msgid "Set Up..."
+msgstr "Configurar..."
+
+#: src/user-list.vala:574
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Would you like "
+"to set up an account now?"
+msgstr ""
+"Necesita una cuenta de inicio de sesión remoto de Ubuntu para usar este "
+"servicio. ¿Quiere configurar una cuenta ahora?"
+
+#: src/user-list.vala:578
+msgid "OK"
+msgstr "Aceptar"
+
+#: src/user-list.vala:579
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Visit "
+"uccs.canonical.com to set up an account."
+msgstr ""
+"Necesita una cuenta de inicio de sesión remoto de Ubuntu para usar este "
+"servicio. Visite uccs.canonical.com para configurar una cuenta."
+
+#: src/user-list.vala:698
+msgid "Server type not supported."
+msgstr "No se admite el tipo de servidor."
+
+#: src/user-list.vala:739
+msgid "Domain:"
+msgstr "Dominio:"
+
+#: src/user-list.vala:800
+msgid "Email address:"
+msgstr "Dirección de correo:"
+
+#: src/user-list.vala:844
+msgid "Log In"
+msgstr "Iniciar sesión"
+
+#: src/user-list.vala:845
+#, c-format
+msgid "Login as %s"
+msgstr "Iniciar sesión como %s"
+
+#: src/user-list.vala:849
+msgid "Retry"
+msgstr "Reintentar"
+
+#: src/user-list.vala:850
+#, c-format
+msgid "Retry as %s"
+msgstr "Reintentar como %s"
+
+#: src/user-list.vala:892
+msgid "Login"
+msgstr "Inicio de sesión"

@@ -1,0 +1,241 @@
+# Malay translation for slick-greeter
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the slick-greeter package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: slick-greeter\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2023-06-01 11:07+0100\n"
+"PO-Revision-Date: 2025-07-28 08:37+0000\n"
+"Last-Translator: Keviindran Ramachandran <Unknown>\n"
+"Language-Team: Malay <ms@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2026-01-08 15:42+0000\n"
+"X-Generator: Launchpad (build 99c00f518760bdd50fc6e353e7736d2fff8fba4a)\n"
+
+#: src/greeter-list.vala:303
+#, c-format
+msgid "Enter password for %s"
+msgstr "Masukkan kata laluan untuk %s"
+
+#: src/greeter-list.vala:305
+msgid "Enter your username"
+msgstr "Masukkan nama pengguna anda"
+
+#: src/greeter-list.vala:815 src/user-list.vala:720
+msgid "Password:"
+msgstr "Kata Laluan:"
+
+#: src/greeter-list.vala:817 src/user-list.vala:714
+msgid "Username:"
+msgstr "Nama Pengguna:"
+
+#: src/greeter-list.vala:872
+msgid "Invalid password, please try again"
+msgstr "Kata laluan tidak sah, sila cuba lagi"
+
+#: src/greeter-list.vala:883
+msgid "Failed to authenticate"
+msgstr "Gagal disahihkan"
+
+#: src/greeter-list.vala:929
+msgid "Failed to start session"
+msgstr "Gagal mulakan sesi"
+
+#: src/greeter-list.vala:943
+msgid "Logging in..."
+msgstr "Mendaftar masuk..."
+
+#: src/main-window.vala:52
+msgid "Login Screen"
+msgstr "Skrin Daftar Masuk"
+
+#: src/main-window.vala:113
+msgid "Back"
+msgstr "Undur"
+
+#: src/menubar.vala:324
+msgid "Power:"
+msgstr "Kuasa:"
+
+#: src/menubar.vala:374
+msgid "Accessibility"
+msgstr "Kebolehcapaian"
+
+#: src/menubar.vala:383
+msgid "Onscreen keyboard"
+msgstr "Papan kekunci atas skrin"
+
+#: src/menubar.vala:388
+msgid "High Contrast"
+msgstr "Beza Jelas Tinggi"
+
+#: src/menubar.vala:394
+msgid "Screen Reader"
+msgstr "Pembaca Skrin"
+
+#: src/menubar.vala:406 src/menubar.vala:453
+msgid "Quit..."
+msgstr "Keluar..."
+
+#: src/menubar.vala:419 src/shutdown-dialog.vala:155
+msgid "Suspend"
+msgstr "Tangguh"
+
+#: src/menubar.vala:437 src/shutdown-dialog.vala:172
+msgid "Hibernate"
+msgstr "Hibernasi"
+
+#: src/menubar.vala:476 src/menubar.vala:520 src/menubar.vala:544
+msgid "Keyboard layout:"
+msgstr "Bentangan papan kekunci"
+
+#: src/menubar.vala:532
+msgid "More layouts..."
+msgstr "Susun atur lain..."
+
+#: src/prompt-box.vala:215
+msgid "Session Options"
+msgstr "Pilihan Sesi"
+
+#: src/session-list.vala:34
+msgid "Select desktop environment"
+msgstr "Pilih persekitaran desktop"
+
+#: src/shutdown-dialog.vala:101
+msgid "Goodbye. Would you like to..."
+msgstr "Selamat tinggal. Ada lagi..."
+
+#: src/shutdown-dialog.vala:105 src/shutdown-dialog.vala:207
+msgid "Shut Down"
+msgstr "Matikan"
+
+#: src/shutdown-dialog.vala:112
+msgid "Are you sure you want to shut down the computer?"
+msgstr "Anda pasti mahu matikan komputer?"
+
+#: src/shutdown-dialog.vala:137
+msgid ""
+"Other users are currently logged in to this computer, shutting down now will "
+"also close these other sessions."
+msgstr ""
+"Lain-lain pengguna yang kini mendaftar masuk ke komputer, menutup komputer "
+"sekarang akan juga menutup lain-lain sesi ini."
+
+#: src/shutdown-dialog.vala:190
+msgid "Restart"
+msgstr "Mula Semula"
+
+#: src/slick-greeter.vala:749
+msgid "Show release version"
+msgstr "Papar versi keluaran"
+
+#: src/slick-greeter.vala:752
+msgid "Run in test mode"
+msgstr "Jalan dalam mod ujian"
+
+#: src/slick-greeter.vala:768
+#, c-format
+msgid "Run '%s --help' to see a full list of available command line options."
+msgstr ""
+"Jalankan '%s --help' untuk melihat senarai penuh pilihan baris perintah yang "
+"ada."
+
+#: src/toggle-box.vala:109
+#, c-format
+msgid "%s (Default)"
+msgstr "%s (Lalai)"
+
+#: src/user-list.vala:45
+msgid "Guest Session"
+msgstr "Sesi Tetamu"
+
+#: src/user-list.vala:455
+msgid "Please enter a complete e-mail address"
+msgstr "Sila masukkan alamat e-mel lengkap"
+
+#: src/user-list.vala:535
+msgid "Incorrect e-mail address or password"
+msgstr "Alamat e-mel atau kata laluan tidak betul"
+
+#: src/user-list.vala:566
+msgid ""
+"If you have an account on an RDP or Citrix server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Jika anda mempunyai pelayan RDP atau Citrix, Daftar Masuk Jauh benarkan anda "
+"jalani aplikasi dari pelayan tersebut."
+
+#: src/user-list.vala:568
+msgid ""
+"If you have an account on an RDP server, Remote Login lets you run "
+"applications from that server."
+msgstr ""
+"Jika anda mempunyai akaun pada pelayan RDP, Daftar Masuk Jauh membenarkan "
+"anda jalani aplikasi melalui pelayan tersebut."
+
+#: src/user-list.vala:571
+msgid "Cancel"
+msgstr "Batal"
+
+#: src/user-list.vala:572
+msgid "Set Up..."
+msgstr "Persediaan..."
+
+#: src/user-list.vala:574
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Would you like "
+"to set up an account now?"
+msgstr ""
+"Anda perlu akaun Daftar Masuk Jauh untuk guna perkhidmatan ini. Anda hendak "
+"pasang akaun sekarang?"
+
+#: src/user-list.vala:578
+msgid "OK"
+msgstr "OK"
+
+#: src/user-list.vala:579
+msgid ""
+"You need an Ubuntu Remote Login account to use this service. Visit "
+"uccs.canonical.com to set up an account."
+msgstr ""
+"Anda perlu akaun Daftar Masuk Jauh untuk guna perkhidmatan ini. Lawari "
+"uccs.canonical.com untuk pasang akaun."
+
+#: src/user-list.vala:698
+msgid "Server type not supported."
+msgstr "Jenis pelayan tidak disokong."
+
+#: src/user-list.vala:739
+msgid "Domain:"
+msgstr "Domain:"
+
+#: src/user-list.vala:800
+msgid "Email address:"
+msgstr "Alamat e-mel:"
+
+#: src/user-list.vala:844
+msgid "Log In"
+msgstr "Daftar Masuk"
+
+#: src/user-list.vala:845
+#, c-format
+msgid "Login as %s"
+msgstr "Daftar masuk sebagai %s"
+
+#: src/user-list.vala:849
+msgid "Retry"
+msgstr "Cuba lagi"
+
+#: src/user-list.vala:850
+#, c-format
+msgid "Retry as %s"
+msgstr "Cuba sekali lagi sebagai %s"
+
+#: src/user-list.vala:892
+msgid "Login"
+msgstr "Daftar Masuk"
