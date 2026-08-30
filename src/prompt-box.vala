@@ -245,7 +245,13 @@ public class PromptBox : FadableBox
 
         option_button = new FlatButton ();
         option_button.get_style_context ().add_class ("option-button");
-        option_button.hexpand = true;
+        /* Not hexpand: the free space in this row belongs to the name column,
+         * so the name can sit in the middle of the box. With both columns
+         * expanding, GTK split the slack between them and the name centred
+         * inside a half-width column - which looked left-aligned. The button
+         * still ends up hard right, because the name column now pushes it
+         * there. */
+        option_button.hexpand = false;
         option_button.vexpand = true;
         option_button.halign = Gtk.Align.END;
         option_button.valign = Gtk.Align.START;
