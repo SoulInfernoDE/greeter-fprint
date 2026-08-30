@@ -744,19 +744,37 @@ public abstract class GreeterList : FadableBox
         panel.get_preferred_width (null, out panel_width);
         panel.get_preferred_height (null, out panel_height);
 
-        /* Below everything the list can draw. The other users' entries are
-         * laid out under the box, and the list clips them to n_below grid rows
-         * (see draw()), so that is the first y where nothing of the list's own
-         * can appear. Measuring the entries' allocations instead looked
-         * tempting but gives stale values here - they are moved by
-         * move_names() in the same allocation cycle. */
+        /* Clear of the entries below the box - but only of the ones that are
+         * really there. The list reserves n_below grid rows under the box for
+         * them and clips to that (see draw()), and using the reserve outright
+         * pushed Tux a fixed 160px down: with two users, where nothing is
+         * below the selected one, that put his message off the bottom of the
+         * screen. Each collapsed entry is one grid row, so counting the
+         * entries after the selected one gives the space actually in use.
+         *
+         * Their own allocations would be the obvious source and are the wrong
+         * one: move_names() moves them in this same allocation cycle, so what
+         * they report here is a cycle out of date. */
+        var rows_below = (int) n_below;
+
+        if (selected_entry != null)
+        {
+            var index = entries.index (selected_entry);
+            if (index >= 0)
+                rows_below = int.min ((int) entries.length () - 1 - index,
+                                      (int) n_below);
+        }
+
+        if (rows_below < 0)
+            rows_below = 0;
+
         var panel_allocation = Gtk.Allocation ();
         panel_allocation.width = panel_width;
         panel_allocation.height = panel_height;
         panel_allocation.x = box_allocation.x
             + (box_allocation.width - panel_width) / 2;
         panel_allocation.y = box_allocation.y + box_allocation.height
-            + (int) (n_below * grid_size) + PANEL_GAP;
+            + rows_below * grid_size + PANEL_GAP;
 
         fixed.move (panel, panel_allocation.x, panel_allocation.y);
         panel.size_allocate (panel_allocation);
