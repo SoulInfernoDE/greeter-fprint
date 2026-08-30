@@ -153,6 +153,21 @@ public class FingerprintPanel : Gtk.Box
         set_state (FingerprintState.FAILED, text);
     }
 
+    /* A retry hint means the previous attempt failed. Whether that is news
+     * depends on the channel: here PAM's own "Failed to match fingerprint"
+     * normally arrives first, so the hint is just the reader re-arming - but
+     * on the lock screen that message is dropped before it reaches the UI
+     * (cinnamon-screensaver's PAM helper discards PAM_ERROR_MSG), and there
+     * the hint is the only evidence the user gets. The same rule serves both:
+     * say it failed unless we just said so. */
+    public void show_retry (string text)
+    {
+        if (state == FingerprintState.FAILED || flash_timer != 0)
+            set_state (FingerprintState.WAITING, text);
+        else
+            set_state (FingerprintState.FAILED, text);
+    }
+
     public void show_success (string text)
     {
         set_state (FingerprintState.SUCCESS, text);

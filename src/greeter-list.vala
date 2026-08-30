@@ -827,6 +827,10 @@ public abstract class GreeterList : FadableBox
                     fingerprint_failures++;
                     panel.show_failure (display);
                 }
+                else if (kind == FingerprintMessageKind.RETRY)
+                {
+                    panel.show_retry (display);
+                }
                 else
                 {
                     panel.show_waiting (display);
