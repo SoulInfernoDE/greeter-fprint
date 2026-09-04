@@ -11,12 +11,17 @@ Upstream's own README is kept as
 name glow yellow while the reader waits, red for a rejected finger, green for a
 recognised one, then Tux swaps the logo for the "Passwort:" sign](doc/states.gif)
 
-Captured from the running greeter in a nested LightDM seat - real accounts,
-real PAM, a real finger on the reader. One frame per state, each held for the
-duration the code gives it: red and green measure 1.5 s in the recording,
-against `FLASH_MS = 1500`. The name of the user being authenticated glows along
-with the logo, so the two read as one signal rather than two, and the box grows
-its password row once the reader has given up.
+Drawn by the greeter itself. `GREETER_FPRINT_RENDER` has it paint its own
+window onto an offscreen Cairo surface and write one PNG per state, so these are
+the fork's widgets, its CSS and its glow code - not a screen grab put through a
+video codec. The accounts come from the same `LightDM.UserList` a real login
+reads, the wallpaper is the configured one, and the messages travel through the
+real classifier and catalogue; only the order of the states is scripted. Each is
+held for the duration the code gives it, 1.5 s per flash.
+
+The name of the user being authenticated glows along with the logo, so the two
+read as one signal rather than two, and the box grows its password row only once
+the reader has given up.
 
 ## What it changes
 
@@ -56,10 +61,11 @@ active-session marker is centred on the box instead of on its first row — it w
 pinned to the top of the name row, which stops being the middle as soon as the
 box grows a row for the password prompt.
 
-## The whole screen
+## In the real greeter
 
-The animation above is cropped to the user list and the panel. Uncropped, from a
-nested LightDM seat:
+The animation above is rendered, and cropped to the user list and the panel.
+This is a screenshot of the whole thing actually working - LightDM, PAM and the
+reader, in a nested seat:
 
 ![greeter-fprint running in a nested LightDM session](doc/panel.png)
 
@@ -109,6 +115,13 @@ For the real greeter, PAM and reader included, in a window:
 ```bash
 dm-tool add-nested-seat --screen 1280x900
 ```
+
+`GREETER_FPRINT_RENDER=<dir> greeter-fprint --test-mode` writes one PNG per
+fingerprint state and quits; `doc/states.gif` is assembled from those. The list
+it draws holds the machine's real accounts, not test mode's fixtures - test mode
+is there only to get past the LightDM daemon connection, which a greeter started
+by hand cannot make. `GREETER_FPRINT_RENDER_USER` picks which name is selected,
+and defaults to the invoking user.
 
 ## Configuration
 

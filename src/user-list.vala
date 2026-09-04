@@ -1012,9 +1012,44 @@ public class UserList : GreeterList
             return session;
     }
 
+    /* GREETER_FPRINT_RENDER (see MainWindow): the greeter cannot reach a
+     * LightDM daemon when it is started by hand, so rendering README images
+     * needs --test-mode to get past that connection. The accounts must not be
+     * test mode's fixtures though - a picture of "No Password" and "Two Factor"
+     * says nothing true about this greeter. */
+    private static bool in_render_mode ()
+    {
+        return Environment.get_variable ("GREETER_FPRINT_RENDER") != null;
+    }
+
+    /* The same LightDM.UserList the greeter reads at a real login, so the
+     * rendered list is the machine's own accounts, avatars and backgrounds. */
+    private void render_fill_list ()
+    {
+        var users = LightDM.UserList.get_instance ();
+        foreach (var user in users.users)
+        {
+            var label = user.real_name;
+            if (label == "")
+                label = user.name;
+            add_user (user.name, label, user.background, user.logged_in,
+                      user.has_messages, user.session);
+        }
+
+        if (!have_entries ())
+            add_manual_entry ();
+
+        var selected = Environment.get_variable ("GREETER_FPRINT_RENDER_USER");
+        if (selected == null)
+            selected = Environment.get_user_name ();
+        set_active_entry (selected);
+    }
+
     private void fill_list ()
     {
-        if (SlickGreeter.singleton.test_mode)
+        if (SlickGreeter.singleton.test_mode && in_render_mode ())
+            render_fill_list ();
+        else if (SlickGreeter.singleton.test_mode)
             test_fill_list ();
         else
         {
@@ -1616,6 +1651,14 @@ public class UserList : GreeterList
         test_two_prompts_first = null;
         test_request_new_password = false;
         test_new_password = null;
+
+        /* GREETER_FPRINT_RENDER: no prompt yet. At a fingerprint login the
+         * password row appears only once pam_fprintd has used up its tries,
+         * and the render walk emits that prompt itself when it reaches that
+         * state - otherwise every frame would carry a password row the real
+         * greeter does not show while the reader is still waiting. */
+        if (in_render_mode ())
+            return;
 
         switch (get_selected_id ())
         {

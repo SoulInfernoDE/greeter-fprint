@@ -172,6 +172,22 @@ public class MainWindow : Gtk.Window
         if (Environment.get_variable ("GREETER_FPRINT_DEMO") != null)
             start_fingerprint_demo ();
 
+        /* GREETER_FPRINT_RENDER=<dir> writes one PNG per fingerprint state and
+         * quits. The frames are drawn by this window onto an offscreen Cairo
+         * surface - the greeter's own widgets, its own CSS, its own glow code -
+         * rather than grabbed off a screen and squeezed through a video codec,
+         * which is what the README images used to cost in sharpness.
+         *
+         * It renders whatever greeter it is running in. Under LightDM that is
+         * the real thing end to end; started by hand it needs --test-mode to
+         * get past the daemon connection, and then the accounts still come from
+         * the real LightDM.UserList rather than test mode's fixtures (see
+         * UserList.render_fill_list). Only the sequence of states is scripted:
+         * every pixel is drawn by the code that draws them at a real login. */
+        var render_dir = Environment.get_variable ("GREETER_FPRINT_RENDER");
+        if (render_dir != null)
+            start_fingerprint_render (render_dir);
+
         align.add (stack);
 
         add_user_list ();
@@ -597,6 +613,116 @@ public class MainWindow : Gtk.Window
                 }
             }
 
+            return Source.CONTINUE;
+        });
+    }
+
+    /* see GREETER_FPRINT_RENDER above. */
+    private void render_frame (string dir, string name)
+    {
+        /* Let the state change reach the widgets first: the glow travels from
+         * the panel to the selected name through a signal and a CSS provider,
+         * and a prompt adds a row to the box. None of that has happened yet at
+         * the moment the state is set. */
+        while (Gtk.events_pending ())
+            Gtk.main_iteration_do (false);
+
+        var w = get_allocated_width ();
+        var h = get_allocated_height ();
+        if (w < 1 || h < 1)
+        {
+            warning ("render: window not allocated yet, skipping %s", name);
+            return;
+        }
+
+        var surface = new Cairo.ImageSurface (Cairo.Format.RGB24, w, h);
+        var cr = new Cairo.Context (surface);
+
+        /* Emitting "draw" with a plain Cairo context rather than calling
+         * gtk_widget_draw: gtk_cairo_should_draw_window() lets every child
+         * through when the context did not come from GDK, which is exactly
+         * what an offscreen snapshot of the whole hierarchy needs. */
+        draw (cr);
+
+        var path = Path.build_filename (dir, name + ".png");
+        if (surface.write_to_png (path) != Cairo.Status.SUCCESS)
+            warning ("render: could not write %s", path);
+        else
+            debug ("render: wrote %s (%dx%d)", path, w, h);
+    }
+
+    private string classified (string pam_line)
+    {
+        FingerprintMessageKind kind;
+        string display;
+        if (FingerprintMessages.classify (pam_line, out kind, out display))
+            return display;
+        return pam_line;
+    }
+
+    private void start_fingerprint_render (string dir)
+    {
+        if (DirUtils.create_with_parents (dir, 0755) != 0)
+        {
+            warning ("render: cannot create %s", dir);
+            return;
+        }
+
+        /* One step per state, spaced just past FLASH_MS. set_state() gives a
+         * flash the panel for its full duration and queues whatever arrives
+         * meanwhile, so a faster walk silently rendered the red frame twice:
+         * the green was still sitting in that queue. Each state is captured
+         * immediately after it is set, while its own flash is lit. The GIF
+         * takes its durations from the code, not from this timer. */
+        var step = 0;
+        Timeout.add (FingerprintPanel.FLASH_MS + 200, () => {
+            switch (step)
+            {
+            case 0:
+                /* Skipped: the first tick only gives the window its size. */
+                break;
+
+            case 1:
+                fingerprint_panel.show_waiting (
+                    classified ("Place your finger on the reader"));
+                render_frame (dir, "1-waiting");
+                break;
+
+            case 2:
+                fingerprint_panel.show_failure (
+                    classified ("Failed to match fingerprint"));
+                render_frame (dir, "2-failed");
+                break;
+
+            case 3:
+                fingerprint_panel.show_success (_("Fingerprint recognised"));
+                render_frame (dir, "3-success");
+                break;
+
+            case 4:
+                /* The password row is not ours to fake: emit the prompt on the
+                 * same signal LightDM uses, so the box grows its row exactly as
+                 * it does when pam_fprintd has run out of tries. The trailing
+                 * space matters - GreeterList.show_prompt_cb() matches PAM's
+                 * literal "Password: " to know what to translate, and without
+                 * it the field keeps the untranslated English.
+                 *
+                 * That handler also raises the sign itself, but only when
+                 * fingerprint_active is set, and that flag belongs to the
+                 * message routing this walk bypasses by driving the panel
+                 * directly. Hence the explicit call below. */
+                SlickGreeter.singleton.show_prompt ("Password: ", LightDM.PromptType.SECRET);
+                fingerprint_panel.show_password_fallback (
+                    _("Please use your password"));
+                render_frame (dir, "4-password");
+                break;
+
+            default:
+                Gtk.main_quit ();
+                return Source.REMOVE;
+            }
+
+            step++;
             return Source.CONTINUE;
         });
     }
