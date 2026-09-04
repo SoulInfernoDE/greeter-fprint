@@ -13,6 +13,13 @@ a rejected finger, green for a recognised one, then the "Passwort:" sign](doc/st
 Rendered with the panel's own drawing code, so the timings are the real ones:
 each flash holds for 1.5 s, and the yellow breathes while the reader waits.
 
+The name of the user being authenticated glows along with it, so the two are
+one signal rather than two - this one is a screen recording of the greeter
+running, not a render:
+
+![The selected user's name glowing yellow, then red, then green, and plain at
+the password prompt](doc/name-glow.gif)
+
 ## What it changes
 
 Three things go wrong with fingerprint login in the stock greeter, all from one
