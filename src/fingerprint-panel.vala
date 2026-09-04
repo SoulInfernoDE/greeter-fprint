@@ -314,16 +314,19 @@ public class FingerprintPanel : Gtk.Box
      * the message there. */
     private string state_glow_rgba ()
     {
+        /* Just the channels, no alpha: the name's glow is built from several
+         * layers and each needs its own opacity - a wide bloom at the same
+         * strength as the core stops being a glow and becomes a blob. */
         switch (state)
         {
         case FingerprintState.FAILED:
-            return "rgba(230, 56, 54, 0.95)";
+            return "230, 56, 54";
         case FingerprintState.SUCCESS:
-            return "rgba(61, 184, 87, 0.95)";
+            return "61, 184, 87";
         case FingerprintState.PASSWORD:
             return "";
         default:
-            return "rgba(255, 204, 26, 0.90)";
+            return "255, 204, 26";
         }
     }
 
