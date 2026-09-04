@@ -14,8 +14,8 @@ Rendered with the panel's own drawing code, so the timings are the real ones:
 each flash holds for 1.5 s, and the yellow breathes while the reader waits.
 
 The name of the user being authenticated glows along with it, so the two are
-one signal rather than two - this one is a screen recording of the greeter
-running, not a render:
+one signal rather than two. These are the greeter's own pixels, one frame per
+state held for the duration the code gives it - 1.5 s for each flash:
 
 ![The selected user's name glowing yellow, then red, then green, and plain at
 the password prompt](doc/name-glow.gif)
