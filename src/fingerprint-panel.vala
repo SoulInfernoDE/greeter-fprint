@@ -444,10 +444,6 @@ public class FingerprintPanel : Gtk.Box
         var x = hx - W / 2;
         var y = hy - H / 2;
 
-        /* the stick, from the hand up into the sign */
-        cr.set_source_rgba (0.42, 0.31, 0.20, 1.0);
-        cr.rectangle (hx - 3, y + H - 4, 6, 26);
-        cr.fill ();
 
         /* rounded card */
         cr.new_sub_path ();
