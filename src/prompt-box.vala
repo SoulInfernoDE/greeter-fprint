@@ -933,8 +933,8 @@ public class PromptBox : FadableBox
         c.scale (half_w / half_h, 1.0);
 
         var glow = new Cairo.Pattern.radial (0, 0, label.height * 0.2, 0, 0, half_h);
-        glow.add_color_stop_rgba (0.0, glow_r, glow_g, glow_b, 0.50);
-        glow.add_color_stop_rgba (0.45, glow_r, glow_g, glow_b, 0.20);
+        glow.add_color_stop_rgba (0.0, glow_r, glow_g, glow_b, 0.32);
+        glow.add_color_stop_rgba (0.45, glow_r, glow_g, glow_b, 0.13);
         glow.add_color_stop_rgba (1.0, glow_r, glow_g, glow_b, 0.0);
 
         c.set_source (glow);
