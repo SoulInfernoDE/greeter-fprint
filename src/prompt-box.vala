@@ -60,6 +60,13 @@ public class PromptBox : FadableBox
     private CachedImage small_message_image;
     private UserAvatar small_avatar_image;
 
+    private const string CHIP_CSS =
+        "grid { background-color: rgba(0, 0, 0, 0.42);"
+                + " border: 1px solid rgba(255, 255, 255, 0.13);"
+                + " border-radius: 9px; margin: 3px 0px; padding: 0px 12px; }";
+    private const string NAME_SHADOW_CSS =
+        "label { text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.85); }";
+
     protected const int COL_ACTIVE        = 0;
     protected const int COL_CONTENT       = 1;
     protected const int COL_SPACER        = 2;
@@ -219,8 +226,9 @@ public class PromptBox : FadableBox
         name_grid.attach (avatar_image, COL_AVATAR, ROW_NAME, 1, 1);
 
         name_label = new FadingLabel ("");
-        name_label.override_font (Pango.FontDescription.from_string ("Ubuntu 13"));
+        name_label.override_font (Pango.FontDescription.from_string ("Ubuntu Medium 13"));
         name_label.override_color (Gtk.StateFlags.NORMAL, { 1.0f, 1.0f, 1.0f, 1.0f });
+        style_name_shadow (name_label);
         /* Centred in its own column rather than pinned left: the name is the
          * label of the box the user is picking, so it belongs in the middle of
          * it. hexpand makes the column take the space left over by the avatar
@@ -282,10 +290,50 @@ public class PromptBox : FadableBox
         return name_grid;
     }
 
+    /* The collapsed entries are bare text over whatever wallpaper the user
+     * picked, which makes them exactly as readable as that wallpaper allows.
+     * They get a chip instead: the same rounded, dark, translucent language the
+     * selected entry already speaks through its DashBox, only quieter - so the
+     * list reads as "one of these is open, the others are waiting" rather than
+     * as text floating on a photo. */
+    private void style_as_chip (Gtk.Widget widget)
+    {
+        try
+        {
+            var css = new Gtk.CssProvider ();
+            css.load_from_data (CHIP_CSS, -1);
+            widget.get_style_context ().add_provider (
+                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        }
+        catch (Error e)
+        {
+            warning ("greeter-fprint: could not style the entry chip: %s", e.message);
+        }
+    }
+
+    /* A soft shadow under the name, for the same reason: white on a bright
+     * photograph is not white enough. On the label rather than the chip, so it
+     * also helps the selected entry, which has no chip. */
+    private void style_name_shadow (Gtk.Widget widget)
+    {
+        try
+        {
+            var css = new Gtk.CssProvider ();
+            css.load_from_data (NAME_SHADOW_CSS, -1);
+            widget.get_style_context ().add_provider (
+                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        }
+        catch (Error e)
+        {
+            warning ("greeter-fprint: could not style the name label: %s", e.message);
+        }
+    }
+
     protected virtual Gtk.Grid create_small_name_grid ()
     {
         var small_name_grid = new Gtk.Grid ();
         small_name_grid.column_spacing = 4;
+        style_as_chip (small_name_grid);
 
         small_avatar_image = new UserAvatar();
         small_avatar_image.is_small = true;
@@ -294,8 +342,9 @@ public class PromptBox : FadableBox
         small_name_grid.attach (small_avatar_image, 0, 0, 1, 1);
 
         small_name_label = new FadingLabel ("");
-        small_name_label.override_font (Pango.FontDescription.from_string ("Ubuntu 13"));
+        small_name_label.override_font (Pango.FontDescription.from_string ("Ubuntu Medium 13"));
         small_name_label.override_color (Gtk.StateFlags.NORMAL, { 1.0f, 1.0f, 1.0f, 1.0f });
+        style_name_shadow (small_name_label);
         small_name_label.valign = Gtk.Align.CENTER;
         small_name_label.yalign = 0.5f;
         small_name_label.xalign = 0.5f;

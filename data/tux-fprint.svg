@@ -1,19 +1,26 @@
-<!--
-  tux-fprint.svg - Tux holding up the Mint logo, for greeter-fprint.
-
-  Copyright (C) 2026 soul-inferno <nofunction@gmx.net>
-  Licensed under the GNU General Public License version 3, like the rest of
-  this fork. See COPYING.
-
-  This is an original drawing, not traced from or derived from any existing
-  file. It depicts Tux, the Linux mascot created by Larry Ewing in 1996 with
-  The GIMP - credit to him for the character.
-
-  The Mint logo is NOT part of this file. The panel composites the system's
-  own installed icon (linuxmint-logo-badge-symbolic) into Tux's hand at
-  runtime, so no Linux Mint trademark is redistributed by this repository.
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" width="260" height="300">
+  <!--
+    tux-fprint.svg - Tux holding up the Mint logo, for greeter-fprint.
+
+    Copyright (C) 2026 soul-inferno <nofunction@gmx.net>
+    Licensed under the GNU General Public License version 3, like the rest of
+    this fork. See COPYING.
+
+    This is an original drawing, not traced from or derived from any existing
+    file. It depicts Tux, the Linux mascot created by Larry Ewing in 1996 with
+    The GIMP - credit to him for the character.
+
+    The Mint logo is NOT part of this file. The panel composites the system's
+    own installed icon (linuxmint-logo-badge-symbolic) into Tux's hand at
+    runtime, so no Linux Mint trademark is redistributed by this repository.
+
+    NOTE: this block sits *inside* the root element on purpose. Above it,
+    gdk-pixbuf stops recognising the file as an SVG at all: its format
+    sniffing wants to see <svg near the start of the file, and a comment
+    this long pushes it out of range. librsvg parses it either way, which
+    is exactly what made that breakage easy to miss.
+  -->
   <!--
     Tux for greeter-fprint's fingerprint panel.
 
