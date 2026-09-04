@@ -333,9 +333,15 @@ public class PromptBox : FadableBox
 
     private void apply_name_shadow (Gtk.CssProvider css, string glow_rgba)
     {
+        /* Two layers, not one: a tight core that survives a bright wallpaper
+         * and a wide bloom that reads as a glow rather than an outline. A
+         * single 11px shadow measured almost nothing against Mint's default
+         * background - the warmth beside the glyphs moved from -3.4 to -1.7,
+         * which is not a subtle effect but an absent one. */
         var shadow = glow_rgba == ""
             ? NAME_SHADOW_CSS
-            : "label { text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.85), 0px 0px 11px %s; }".printf (glow_rgba);
+            : ("label { text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.85),"
+               + " 0px 0px 5px %s, 0px 0px 15px %s; }").printf (glow_rgba, glow_rgba);
 
         try
         {

@@ -317,13 +317,13 @@ public class FingerprintPanel : Gtk.Box
         switch (state)
         {
         case FingerprintState.FAILED:
-            return "rgba(230, 56, 54, 0.75)";
+            return "rgba(230, 56, 54, 0.95)";
         case FingerprintState.SUCCESS:
-            return "rgba(61, 184, 87, 0.75)";
+            return "rgba(61, 184, 87, 0.95)";
         case FingerprintState.PASSWORD:
             return "";
         default:
-            return "rgba(255, 204, 26, 0.70)";
+            return "rgba(255, 204, 26, 0.90)";
         }
     }
 
