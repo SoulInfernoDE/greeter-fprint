@@ -103,6 +103,34 @@ The installed slick-greeter is deliberately left untouched and stays available
 as a fallback: if this greeter ever fails to start, delete that file from a TTY
 (Ctrl+Alt+F2) and restart `lightdm`.
 
+## Unlocking the keyring as well
+
+Recommended alongside this fork, because logging in with a finger has one
+consequence the greeter cannot solve: the GNOME keyring stays locked.
+`pam_gnome_keyring` unlocks it with the password you type, and a fingerprint
+login never produces one - so Wi-Fi passwords, saved logins and everything else
+in there start asking for the password you just avoided typing. That is Linux
+Mint's own stated reason for shipping fingerprint login disabled at the login
+screen in the first place.
+
+Sealing the keyring password to the TPM closes the gap: it is stored encrypted
+against a PCR7 policy, released only when the machine boots into the same
+Secure Boot state, and handed to `pam_gnome_keyring` by a PAM module.
+[tpm-keyring-unlock](https://github.com/dmitriitimoshenko/tpm-keyring-unlock)
+does exactly that.
+
+On Linux Mint, use this fork of it:
+
+    https://github.com/SoulInfernoDE/tpm-keyring-unlock
+
+It carries a fix the original needs here. Mint's `/etc/pam.d/lightdm` writes
+its keyring line with the `pam.conf` "-" prefix, as `-auth`, and the
+installer's detection did not match that - so it found nothing to patch, said
+so cheerfully, and the keyring went on asking. Sent upstream as
+[PR #6](https://github.com/dmitriitimoshenko/tpm-keyring-unlock/pull/6); until
+that lands, the fork is the one that works. Its `JOURNAL.md` also carries the
+rest of the Mint specifics, `pam_fingwit` included.
+
 ## Looking at it without logging out
 
 `GREETER_FPRINT_DEMO=1 greeter-fprint --test-mode` walks the panel through every
@@ -156,6 +184,20 @@ Adding a language means translating those fifteen strings into
 deliberately not what happened here - this text sits on a login screen, and
 wrong-sounding German or French there is worse than plain English. Pull
 requests from people who actually speak the language are welcome.
+
+## For Linux Mint
+
+Everything original to this fork - the code, the artwork, the ideas behind them
+- is offered to the Linux Mint project to use, adapt, relicense and ship in
+whatever way suits them. No need to ask, no attribution required, no strings.
+A change that lands in slick-greeter itself helps more people than this
+repository ever will, so please take anything that is useful.
+
+That grant covers what is actually ours to give: the changes made in this
+repository and `data/tux-fprint.svg`. Code inherited from slick-greeter keeps
+its own licence and its own copyright holders, and the session badges keep the
+CC-BY-3.0 attribution requirement described in
+[COPYRIGHT.md](COPYRIGHT.md).
 
 ## Licence
 

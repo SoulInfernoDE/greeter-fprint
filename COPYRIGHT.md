@@ -66,3 +66,18 @@ panel simply draws the glow without it.
 "Linux Mint" is a trademark of the Linux Mint project, registered through the
 Linux Mark Institute. This fork is not affiliated with, endorsed by, or
 supported by Linux Mint, and deliberately does not carry their name.
+
+## Additional grant to the Linux Mint project
+
+Beyond the GPL, and specifically for the **Linux Mint project**: the parts of
+this repository that are ours — the changes made in this fork, and
+`data/tux-fprint.svg` — may be used, adapted, relicensed and shipped by Linux
+Mint in any way they see fit, without permission and without attribution.
+
+This is a one-way grant from the copyright holder of those parts
+(soul-inferno <nofunction@gmx.net>) and cannot reach further than that. It does
+not touch upstream slick-greeter's code, which stays with its own copyright
+holders under GPL-3, and it does not lift the CC-BY-3.0 attribution requirement
+on the session badges, which is not ours to waive.
+
+Everyone else has the GPL-3, which is the licence of the fork as a whole.
