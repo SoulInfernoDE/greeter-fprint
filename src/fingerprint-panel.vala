@@ -78,6 +78,11 @@ public class FingerprintPanel : Gtk.Box
 
     public signal void success_finished ();
 
+    /* The selected user's name picks this up and glows in the same colour the
+     * logo has, so the name, the message and the logo are one signal rather
+     * than three. Empty string means "no fingerprint activity, no glow". */
+    public signal void state_glow_changed (string rgba);
+
     private Gtk.DrawingArea canvas;
     private Gtk.Label message_label;
     private Gtk.CssProvider label_style;
@@ -245,6 +250,9 @@ public class FingerprintPanel : Gtk.Box
         if (state == FingerprintState.HIDDEN)
         {
             stop_pulse ();
+            /* apply_label_colour() is not reached on this path, so the name
+             * would keep glowing after the panel is gone. */
+            state_glow_changed ("");
             hide ();
             return;
         }
@@ -293,7 +301,30 @@ public class FingerprintPanel : Gtk.Box
             });
         }
 
+        /* Message colour and name glow both follow the state, so this belongs
+         * on every transition - not only on the flash-end path, which is where
+         * it wrongly ended up and left the greeter's message stuck on the
+         * waiting colour. */
+        apply_label_colour ();
         queue_draw_canvas ();
+    }
+
+    /* The glow the name should carry for the current state, as a CSS colour.
+     * PASSWORD has no signal colour of its own, so it gets none - the sign is
+     * the message there. */
+    private string state_glow_rgba ()
+    {
+        switch (state)
+        {
+        case FingerprintState.FAILED:
+            return "rgba(230, 56, 54, 0.75)";
+        case FingerprintState.SUCCESS:
+            return "rgba(61, 184, 87, 0.75)";
+        case FingerprintState.PASSWORD:
+            return "";
+        default:
+            return "rgba(255, 204, 26, 0.70)";
+        }
     }
 
     /* The message takes the same colour the logo has right now; PASSWORD is
@@ -317,6 +348,8 @@ public class FingerprintPanel : Gtk.Box
             colour = "#ffcc1a";
             break;
         }
+
+        state_glow_changed (state_glow_rgba ());
 
         try
         {

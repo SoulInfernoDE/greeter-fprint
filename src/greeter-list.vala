@@ -207,6 +207,15 @@ public abstract class GreeterList : FadableBox
             FingerprintPanel.instance.notify["visible"].connect (() => {
                 queue_resize ();
             });
+
+            /* The selected user's name glows along with the logo. Kept here
+             * rather than in the panel because the panel has no idea which
+             * entry is selected, and the selection can change under it. */
+            FingerprintPanel.instance.state_glow_changed.connect ((rgba) => {
+                current_name_glow = rgba;
+                if (selected_entry != null)
+                    selected_entry.set_name_glow (rgba);
+            });
         }
 
         scroll_timer = new AnimateTimer (AnimateTimer.ease_out_quint, AnimateTimer.FAST);
@@ -664,6 +673,7 @@ public abstract class GreeterList : FadableBox
         {
             /* Just note it for the future if we haven't been realized yet */
             selected_entry = entry;
+            apply_name_glow_to_selection ();
             return;
         }
 
@@ -695,6 +705,7 @@ public abstract class GreeterList : FadableBox
                 selected_entry.clear ();
 
             selected_entry = entry;
+            apply_name_glow_to_selection ();
             entry_selected (selected_entry.id);
 
             if (mode == Mode.ENTRY)
@@ -871,6 +882,18 @@ public abstract class GreeterList : FadableBox
 
 
     /* Not all subclasses are going to be interested in talking to lightdm, but for those that are, make it easy. */
+
+    /* Last glow the panel asked for, re-applied when the selection moves. */
+    private string current_name_glow = "";
+
+    /* The glow belongs to whichever entry is selected right now, so it has to
+     * follow the selection as well as the panel's state: switching user
+     * mid-conversation would otherwise leave it burning on the old name. */
+    private void apply_name_glow_to_selection ()
+    {
+        foreach (var entry in entries)
+            entry.set_name_glow (entry == selected_entry ? current_name_glow : "");
+    }
 
     protected bool will_clear = false;
     protected bool prompted = false;

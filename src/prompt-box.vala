@@ -48,6 +48,7 @@ public class PromptBox : FadableBox
     protected Gtk.Grid name_grid;
     private ActiveIndicator active_indicator;
     protected FadingLabel name_label;
+    private Gtk.CssProvider? name_style = null;
     protected FlatButton option_button;
     private CachedImage option_image;
     private CachedImage message_image;
@@ -311,22 +312,51 @@ public class PromptBox : FadableBox
         }
     }
 
-    /* A soft shadow under the name, for the same reason: white on a bright
-     * photograph is not white enough. On the label rather than the chip, so it
-     * also helps the selected entry, which has no chip. */
+    /* A soft shadow under the name, for the same reason the chip exists: white
+     * on a bright photograph is not white enough. On the label rather than the
+     * chip, so it also helps the selected entry, which has no chip.
+     *
+     * One provider per label, not one per effect: the glow below writes into
+     * the same text-shadow property, and two providers at the same priority
+     * would just fight over it. */
     private void style_name_shadow (Gtk.Widget widget)
     {
+        var css = new Gtk.CssProvider ();
+        widget.get_style_context ().add_provider (
+            css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+        if (widget == name_label)
+            name_style = css;
+
+        apply_name_shadow (css, "");
+    }
+
+    private void apply_name_shadow (Gtk.CssProvider css, string glow_rgba)
+    {
+        var shadow = glow_rgba == ""
+            ? NAME_SHADOW_CSS
+            : "label { text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.85), 0px 0px 11px %s; }".printf (glow_rgba);
+
         try
         {
-            var css = new Gtk.CssProvider ();
-            css.load_from_data (NAME_SHADOW_CSS, -1);
-            widget.get_style_context ().add_provider (
-                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+            css.load_from_data (shadow, -1);
         }
         catch (Error e)
         {
             warning ("greeter-fprint: could not style the name label: %s", e.message);
         }
+    }
+
+    /* Called by GreeterList when the fingerprint panel changes state: the
+     * selected user's name takes the same colour the logo is glowing in. An
+     * empty string clears it, leaving the plain shadow. */
+    public void set_name_glow (string glow_rgba)
+    {
+        if (name_style == null)
+            return;
+
+        apply_name_shadow (name_style, glow_rgba);
+        name_label.invalidate_cache ();
     }
 
     protected virtual Gtk.Grid create_small_name_grid ()

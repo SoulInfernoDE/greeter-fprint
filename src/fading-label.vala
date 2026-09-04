@@ -74,6 +74,15 @@ public class FadingLabel : Gtk.Label
         return surface;
     }
 
+    /* The cached surface is only dropped on size_allocate, so a style change
+     * that does not resize the label - a new text-shadow, say - would keep
+     * drawing the old pixels forever. */
+    public void invalidate_cache ()
+    {
+        cached_surface = null;
+        queue_draw ();
+    }
+
     public override bool draw (Cairo.Context c)
     {
         if (cached_surface == null)
