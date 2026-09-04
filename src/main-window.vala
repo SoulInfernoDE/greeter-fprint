@@ -184,10 +184,34 @@ public class MainWindow : Gtk.Window
 
         if (SlickGreeter.singleton.test_mode)
         {
-            /* Simulate an 800x600 monitor to the left of a 640x480 monitor */
+            /* Simulate an 800x600 monitor to the left of a 640x480 monitor.
+             *
+             * GREETER_FPRINT_TEST_SIZE=WIDTHxHEIGHT replaces that with a single
+             * monitor of the given size. Upstream's pair is deliberate - it
+             * tests multi-monitor placement - but 800x600 is smaller than this
+             * greeter draws: with the fingerprint panel below the user list,
+             * Tux falls off the bottom, which makes test mode useless for
+             * looking at the whole thing at once. Unset, nothing changes. */
             monitors = new List<Monitor> ();
-            monitors.append (new Monitor (0, 0, 800, 600));
-            monitors.append (new Monitor (800, 120, 640, 480));
+
+            var test_size = Environment.get_variable ("GREETER_FPRINT_TEST_SIZE");
+            if (test_size != null)
+            {
+                var parts = test_size.split ("x");
+                if (parts.length == 2)
+                {
+                    var w = int.parse (parts[0]);
+                    var h = int.parse (parts[1]);
+                    if (w > 320 && h > 240)
+                        monitors.append (new Monitor (0, 0, w, h));
+                }
+            }
+
+            if (monitors.length () == 0)
+            {
+                monitors.append (new Monitor (0, 0, 800, 600));
+                monitors.append (new Monitor (800, 120, 640, 480));
+            }
             background.set_monitors (monitors);
             move_to_monitor (monitors.nth_data (0));
             resize (background.width, background.height);

@@ -7,18 +7,16 @@ Unofficial. Not affiliated with, endorsed by, or supported by Linux Mint.
 Upstream's own README is kept as
 [README.slick-greeter.md](README.slick-greeter.md).
 
-![The panel cycling through its states: yellow while the reader waits, red for
-a rejected finger, green for a recognised one, then the "Passwort:" sign](doc/states.gif)
+![The greeter cycling through its states: the Mint logo and the selected user's
+name glow yellow while the reader waits, red for a rejected finger, green for a
+recognised one, then Tux swaps the logo for the "Passwort:" sign](doc/states.gif)
 
-Rendered with the panel's own drawing code, so the timings are the real ones:
-each flash holds for 1.5 s, and the yellow breathes while the reader waits.
-
-The name of the user being authenticated glows along with it, so the two are
-one signal rather than two. These are the greeter's own pixels, one frame per
-state held for the duration the code gives it - 1.5 s for each flash:
-
-![The selected user's name glowing yellow, then red, then green, and plain at
-the password prompt](doc/name-glow.gif)
+Captured from the running greeter in a nested LightDM seat - real accounts,
+real PAM, a real finger on the reader. One frame per state, each held for the
+duration the code gives it: red and green measure 1.5 s in the recording,
+against `FLASH_MS = 1500`. The name of the user being authenticated glows along
+with the logo, so the two read as one signal rather than two, and the box grows
+its password row once the reader has given up.
 
 ## What it changes
 
@@ -58,9 +56,10 @@ active-session marker is centred on the box instead of on its first row — it w
 pinned to the top of the name row, which stops being the middle as soon as the
 box grows a row for the password prompt.
 
-## In the real greeter
+## The whole screen
 
-Not a mockup - LightDM, PAM and the reader, in a nested seat:
+The animation above is cropped to the user list and the panel. Uncropped, from a
+nested LightDM seat:
 
 ![greeter-fprint running in a nested LightDM session](doc/panel.png)
 
