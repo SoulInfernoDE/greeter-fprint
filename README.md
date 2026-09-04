@@ -111,6 +111,33 @@ It reads exactly what slick-greeter reads — the `x.dm.slick-greeter` schema an
 configuration (background, per-user backgrounds, theme, fonts) applies
 unchanged.
 
+## Translations
+
+Two sets of strings meet in this panel, and they are not equally well covered.
+
+**Inherited from slick-greeter**, and complete: everything upstream already
+translated, including the "Password:" on Tux's sign. The fork kept upstream's
+whole `po/` directory and renamed the gettext domain, so on a French system
+that sign reads "Mot de passe :" with nothing to configure. Verified against
+the installed catalogues:
+
+    de  Passwort:        pl  Hasło:
+    fr  Mot de passe :   nl  Wachtwoord:
+    es  Contraseña:      ru  Пароль:
+
+**Added by this fork**, and German only: the fifteen strings the panel itself
+produces - "Fingerprint not recognised", "Place your %s on the reader" and so
+on, at the bottom of each `po/*.po` under a `greeter-fprint: fingerprint panel`
+comment. Everywhere else they fall back to their English msgid, which is
+correct behaviour and still a half-finished picture: on a French system the
+sign speaks French and the message under Tux does not.
+
+Adding a language means translating those fifteen strings into
+`po/<language>.po`. Machine translation would fill the gap in minutes and is
+deliberately not what happened here - this text sits on a login screen, and
+wrong-sounding German or French there is worse than plain English. Pull
+requests from people who actually speak the language are welcome.
+
 ## Licence
 
 GPL-3, like slick-greeter. See [COPYING](COPYING), and [COPYRIGHT.md](COPYRIGHT.md)
