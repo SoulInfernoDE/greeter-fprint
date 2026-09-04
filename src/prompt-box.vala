@@ -49,6 +49,39 @@ public class PromptBox : FadableBox
     private ActiveIndicator active_indicator;
     protected FadingLabel name_label;
     private Gtk.CssProvider? name_style = null;
+
+    /* The wide part of the glow is painted, not shadowed: GTK clips a label's
+     * text-shadow to the label, and the clip lands around 30px out - measured,
+     * a hard cut to zero rather than a falloff. Padding the label does not
+     * move it. So the bloom is drawn into the box behind the name instead,
+     * where nothing clips it until the box edge, and the CSS shadow is left to
+     * do what it is good at: the tight core right at the glyphs. */
+    private bool glow_on = false;
+    private double glow_r = 0.0;
+    private double glow_g = 0.0;
+    private double glow_b = 0.0;
+
+    private void parse_glow (string channels)
+    {
+        glow_on = false;
+
+        if (channels == "")
+            return;
+
+        var parts = channels.split (",");
+        if (parts.length != 3)
+            return;
+
+        glow_r = int.parse (parts[0].strip ()) / 255.0;
+        glow_g = int.parse (parts[1].strip ()) / 255.0;
+        glow_b = int.parse (parts[2].strip ()) / 255.0;
+        glow_on = true;
+    }
+
+    /* Reach of the painted bloom. 36px is one centimetre on a 96dpi screen,
+     * which is what was asked for; the box is 112px tall, so it fits. */
+    private const double GLOW_REACH = 36.0;
+
     protected FlatButton option_button;
     private CachedImage option_image;
     private CachedImage message_image;
@@ -345,9 +378,8 @@ public class PromptBox : FadableBox
         var shadow = glow_rgba == ""
             ? NAME_SHADOW_CSS
             : ("label { text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.85),"
-               + " 0px 0px 6px rgba(%s, 0.95),"
-               + " 0px 0px 20px rgba(%s, 0.75),"
-               + " 0px 0px 38px rgba(%s, 0.45); }").printf (glow_rgba, glow_rgba, glow_rgba);
+               + " 0px 0px 7px rgba(%s, 0.95),"
+               + " 0px 0px 16px rgba(%s, 0.60); }").printf (glow_rgba, glow_rgba);
 
         try
         {
@@ -364,6 +396,9 @@ public class PromptBox : FadableBox
      * empty string clears it, leaving the plain shadow. */
     public void set_name_glow (string glow_rgba)
     {
+        parse_glow (glow_rgba);
+        queue_draw ();
+
         if (name_style == null)
             return;
 
@@ -867,6 +902,51 @@ public class PromptBox : FadableBox
     public void hide_avatar ()
     {
         avatar_image.hide ();
+    }
+
+    /* The wide half of the name's glow. It is painted rather than shadowed
+     * because GTK clips a label's text-shadow: measured, the falloff stops
+     * dead about 30px out, and padding the label does not move that edge. In
+     * here nothing clips until the box itself, which is 112px tall - room
+     * enough for the centimetre that was asked for. The CSS shadow keeps the
+     * tight core right at the glyphs, where it belongs. */
+    private void draw_name_glow (Cairo.Context c)
+    {
+        if (!glow_on || name_label == null || !name_label.get_mapped ())
+            return;
+
+        Gtk.Allocation mine, label;
+        get_allocation (out mine);
+        name_label.get_allocation (out label);
+
+        var cx = label.x - mine.x + label.width / 2.0;
+        var cy = label.y - mine.y + label.height / 2.0;
+
+        /* Wider than tall: a name is a line of text, and a circular bloom
+         * around it reads as a sun behind the word rather than the word
+         * itself glowing. */
+        var half_h = label.height / 2.0 + GLOW_REACH;
+        var half_w = half_h * 1.45;
+
+        c.save ();
+        c.translate (cx, cy);
+        c.scale (half_w / half_h, 1.0);
+
+        var glow = new Cairo.Pattern.radial (0, 0, label.height * 0.2, 0, 0, half_h);
+        glow.add_color_stop_rgba (0.0, glow_r, glow_g, glow_b, 0.50);
+        glow.add_color_stop_rgba (0.45, glow_r, glow_g, glow_b, 0.20);
+        glow.add_color_stop_rgba (1.0, glow_r, glow_g, glow_b, 0.0);
+
+        c.set_source (glow);
+        c.arc (0, 0, half_h, 0, 2 * Math.PI);
+        c.fill ();
+        c.restore ();
+    }
+
+    public override bool draw (Cairo.Context c)
+    {
+        draw_name_glow (c);
+        return base.draw (c);
     }
 }
 
