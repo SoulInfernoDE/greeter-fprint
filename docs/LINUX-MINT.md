@@ -1,5 +1,7 @@
 # Fingerprint login on Linux Mint
 
+***English** · [Deutsch](LINUX-MINT.de.md)*
+
 Notes from getting this working on Mint 22.3 (Cinnamon, LightDM, Ubuntu 24.04
 base). None of it is caused by this fork; all of it will bite anyone trying to
 use a fingerprint reader at the Mint login screen.
@@ -31,8 +33,8 @@ if is_login_session():                       # PAM_SERVICE in lightdm/gdm/login/
 `org.x.fingwit login-enabled` defaults to false, and Fingwit's own GUI has no
 toggle for it — the whole system references that schema in three places
 (`gschema.xml`, `pam_fingwit.py`, `/usr/bin/fingwit`) and none of them writes
-the key. Mint's reason for the default is the problem this fork exists to solve:
-a fingerprint login leaves the keyring locked.
+the key. Mint's reason for the default is that a fingerprint login leaves the
+keyring locked — see [the last section](#unlocking-the-keyring-as-well).
 
 **Two traps when testing this.**
 
@@ -97,3 +99,29 @@ Note the trade-off: PAM is serial — `pam_fprintd`'s own man page says
 fingerprint and password cannot both be live at once — so a long timeout also
 means waiting that long before you can type instead. Escape cancels and
 restarts the conversation.
+
+## Unlocking the keyring as well
+
+After a fingerprint login the GNOME keyring stays locked. `pam_gnome_keyring`
+unlocks it with the password you type, and a fingerprint login never produces
+one — so Wi-Fi passwords, saved logins and everything else in it ask for the
+password you just avoided typing.
+
+[tpm-keyring-unlock](https://github.com/dmitriitimoshenko/tpm-keyring-unlock)
+closes the gap: the keyring password is sealed to the TPM against a PCR7 policy,
+released only when the machine boots into the same Secure Boot state, and handed
+to `pam_gnome_keyring` by a PAM module.
+
+**On Linux Mint, use [this fork of it](https://github.com/SoulInfernoDE/tpm-keyring-unlock).**
+Mint's `/etc/pam.d/lightdm` writes its keyring line with the `pam.conf` "-"
+prefix, as `-auth`, and the original installer did not recognise that: it found
+nothing to patch, said so, and the keyring kept asking. The fix is upstream as
+[PR #6](https://github.com/dmitriitimoshenko/tpm-keyring-unlock/pull/6); until it
+lands, the fork is the one that works on Mint.
+
+**Know what it protects.** The tool is meant for disks that are not fully
+encrypted. There a PCR7-only seal stops someone who pulls the disk and reads it
+in another machine — not someone who takes the whole laptop and boots it from a
+signed live image, which reaches the same PCR7 value and can unseal the keyring
+password with no password asked. Details in
+[issue #8](https://github.com/dmitriitimoshenko/tpm-keyring-unlock/issues/8).

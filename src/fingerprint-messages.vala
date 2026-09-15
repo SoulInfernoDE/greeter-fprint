@@ -30,9 +30,10 @@
  *  - They arrive in English regardless of the system locale: lightdm never
  *    calls setlocale(), so pam_fprintd's gettext() returns the msgid
  *    untranslated. Matching English is therefore matching what actually
- *    arrives, not an assumption about the user's language. The German the
- *    user sees is produced here instead - which also means it stays correct
- *    whether or not a fprintd translation is installed on the system.
+ *    arrives, not an assumption about the user's language. What the user
+ *    sees is produced here instead, from this project's own catalogue, with
+ *    English as the base and fallback - so it is right whether or not a
+ *    fprintd translation happens to be installed on the system.
  *
  * If a string is not recognised as fingerprint-related, classify() returns
  * false and the greeter handles the message exactly as it always did.
@@ -47,25 +48,49 @@ public enum FingerprintMessageKind
 
 namespace FingerprintMessages
 {
-    private struct FingerName
-    {
-        public unowned string english;
-        public unowned string german;
-    }
-
-    /* Longest first: "left index finger" has to win over a bare "finger". */
-    private const FingerName[] FINGERS = {
-        { "left index finger",   "linken Zeigefinger" },
-        { "left middle finger",  "linken Mittelfinger" },
-        { "left ring finger",    "linken Ringfinger" },
-        { "left little finger",  "linken kleinen Finger" },
-        { "right index finger",  "rechten Zeigefinger" },
-        { "right middle finger", "rechten Mittelfinger" },
-        { "right ring finger",   "rechten Ringfinger" },
-        { "right little finger", "rechten kleinen Finger" },
-        { "left thumb",          "linken Daumen" },
-        { "right thumb",         "rechten Daumen" }
+    /* Finger names as pam_fprintd sends them. Longest first: "left index
+     * finger" has to win over a bare "finger".
+     *
+     * These used to be paired with hard-wired German names, which were then
+     * inserted into a *translated* sentence - so on any system that was not
+     * German the panel said "Place your rechten Daumen on the reader". The
+     * names are catalogue strings now, like every other word the panel
+     * shows; see finger_label(). */
+    private const string[] FINGERS = {
+        "left index finger",
+        "left middle finger",
+        "left ring finger",
+        "left little finger",
+        "right index finger",
+        "right middle finger",
+        "right ring finger",
+        "right little finger",
+        "left thumb",
+        "right thumb"
     };
+
+    /* Spelled out one literal per case so that xgettext sees every msgid; a
+     * _() around a variable would translate at runtime but never reach the
+     * catalogue. Translators: the name is inserted into "Place your %s on the
+     * reader" and "Swipe your %s across the reader", so use the form those
+     * sentences need (German, for instance, needs the accusative). */
+    private string finger_label (string finger)
+    {
+        switch (finger)
+        {
+        case "left index finger":   return _("left index finger");
+        case "left middle finger":  return _("left middle finger");
+        case "left ring finger":    return _("left ring finger");
+        case "left little finger":  return _("left little finger");
+        case "right index finger":  return _("right index finger");
+        case "right middle finger": return _("right middle finger");
+        case "right ring finger":   return _("right ring finger");
+        case "right little finger": return _("right little finger");
+        case "left thumb":          return _("left thumb");
+        case "right thumb":         return _("right thumb");
+        default:                    return finger;
+        }
+    }
 
     public bool classify (string raw,
                           out FingerprintMessageKind kind,
@@ -129,13 +154,13 @@ namespace FingerprintMessages
         {
             kind = FingerprintMessageKind.WAITING;
 
-            foreach (var finger in FINGERS)
+            foreach (unowned string finger in FINGERS)
             {
-                if (finger.english in text)
+                if (finger in text)
                 {
                     display = placing
-                        ? _("Place your %s on the reader").printf (finger.german)
-                        : _("Swipe your %s across the reader").printf (finger.german);
+                        ? _("Place your %s on the reader").printf (finger_label (finger))
+                        : _("Swipe your %s across the reader").printf (finger_label (finger));
                     return true;
                 }
             }

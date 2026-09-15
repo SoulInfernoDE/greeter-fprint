@@ -34,7 +34,7 @@
  *   WAITING   Mint logo glows yellow, breathing, while the reader waits.
  *   FAILED    Mint logo flashes red for FLASH_MS, then back to WAITING.
  *   SUCCESS   Mint logo glows green for FLASH_MS, then success_finished().
- *   PASSWORD  Tux swaps the logo for a "Passwort:" sign - the reader has
+ *   PASSWORD  Tux swaps the logo for a "Password:" sign - the reader has
  *             given up (pam_fprintd's max-tries) and PAM fell through to the
  *             password.
  */

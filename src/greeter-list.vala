@@ -958,7 +958,7 @@ public abstract class GreeterList : FadableBox
         /* A prompt arriving after the reader has been talking means
          * pam_fprintd has used up its max-tries and PAM has fallen through to
          * the password. That is the moment Tux swaps the Mint logo in his hand
-         * for the "Passwort:" sign - it is driven by what PAM actually does,
+         * for the "Password:" sign - it is driven by what PAM actually does,
          * rather than by us trying to guess pam_fprintd's retry count. */
         if (fingerprint_active && FingerprintPanel.instance != null)
             FingerprintPanel.instance.show_password_fallback (

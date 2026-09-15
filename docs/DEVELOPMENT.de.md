@@ -1,0 +1,66 @@
+# Entwicklung
+
+*[English](DEVELOPMENT.md) · **Deutsch***
+
+## Demomodus
+
+```bash
+GREETER_FPRINT_DEMO=1 ./build/src/greeter-fprint --test-mode
+```
+
+Schickt die Anzeige zeitgesteuert durch alle Zustände und füttert dabei die
+echten englischen Texte von `pam_fprintd` durch den echten Classifier – was du
+siehst, ist also das, was ein echter Leser erzeugt, Übersetzung eingeschlossen.
+Der Testmodus zeigt die Beispielkonten von slick-greeter („No Password“, „Two
+Factor“, …); er ist zum Anschauen da, nicht für Bilder.
+
+`GREETER_FPRINT_TEST_SIZE=1000x1080` ersetzt die fest eingebauten Monitore des
+Testmodus (800×600 und 640×480) durch einen einzigen in der angegebenen Größe.
+Bei 800×600 fällt Tux unten aus dem Bild.
+
+## Der echte Anmeldebildschirm im Fenster
+
+```bash
+dm-tool add-nested-seat --screen 1280x900
+```
+
+Eine echte LightDM-Sitzung mit echtem PAM und echtem Leser. Ein erkannter Finger
+meldet dich dort wirklich an.
+
+## Die README-Bilder rendern
+
+```bash
+# Englisch, für README.md
+LC_ALL=C.UTF-8 GREETER_FPRINT_RENDER=/tmp/frames-en GREETER_FPRINT_TEST_SIZE=1000x1080 \
+  ./build/src/greeter-fprint --test-mode
+
+# Deutsch, für README.de.md
+LC_ALL=de_DE.UTF-8 GREETER_FPRINT_RENDER=/tmp/frames-de GREETER_FPRINT_TEST_SIZE=1000x1080 \
+  ./build/src/greeter-fprint --test-mode
+```
+
+Schreibt pro Zustand ein PNG (`1-waiting` … `4-password`) und beendet sich. Das
+Fenster zeichnet sich selbst auf eine Cairo-Fläche außerhalb des Bildschirms; die
+Bilder sind also die eigenen Widgets, das CSS und der Leuchtcode des
+Anmeldebildschirms, in voller Schärfe.
+
+- Die Konten sind die echten des Rechners aus `LightDM.UserList`, nicht die
+  Beispielkonten des Testmodus. `GREETER_FPRINT_RENDER_USER` wählt den
+  markierten Namen; ohne Angabe bist du es.
+- Der Testmodus wird nur gebraucht, um an der Verbindung zum LightDM-Dienst
+  vorbeizukommen, die ein von Hand gestarteter Anmeldebildschirm nicht aufbauen
+  kann. Außerhalb des Testmodus wird die Variable ignoriert; ein echter
+  Anmeldebildschirm schreibt also nie Bilder von sich und beendet sich nie
+  deswegen.
+- Die Schritte liegen knapp über `FLASH_MS` auseinander. Ein Aufblitzen gehört
+  der Anzeige für seine volle Dauer und stellt alles zurück, was in der Zeit
+  eintrifft – ein schnellerer Durchlauf nimmt deshalb zweimal dasselbe Bild auf.
+- Die Passwortzeile wird mit dem wörtlichen PAM-Text `"Password: "` angefordert,
+  mit Leerzeichen am Ende – genau diese Zeichenkette wird übersetzt.
+
+`docs/states.gif` (englisch) und `docs/states.de.gif` (deutsch) entstehen auf
+dieselbe Weise aus diesen Bildern: Ausschnitt 420×550 bei
+(290, 380), auf 380 px Breite skaliert, eine gemeinsame Palette mit 256 Farben
+und Floyd-Steinberg-Dithering (ohne das bekommt das Hintergrundbild harte
+Farbstufen), und die Dauern aus dem Code – 2,4 s Warten, 1,5 s Rot, 1,6 s
+Warten, 1,5 s Grün, 1,6 s Warten, 1,8 s Schild.
