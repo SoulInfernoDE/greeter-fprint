@@ -178,15 +178,26 @@ public class MainWindow : Gtk.Window
          * rather than grabbed off a screen and squeezed through a video codec,
          * which is what the README images used to cost in sharpness.
          *
-         * It renders whatever greeter it is running in. Under LightDM that is
-         * the real thing end to end; started by hand it needs --test-mode to
-         * get past the daemon connection, and then the accounts still come from
-         * the real LightDM.UserList rather than test mode's fixtures (see
-         * UserList.render_fill_list). Only the sequence of states is scripted:
-         * every pixel is drawn by the code that draws them at a real login. */
+         * The accounts still come from the real LightDM.UserList rather than
+         * test mode's fixtures (see UserList.render_fill_list). Only the
+         * sequence of states is scripted: every pixel is drawn by the code that
+         * draws them at a real login.
+         *
+         * Test mode only, deliberately. Inside a real LightDM session this hook
+         * would write pictures of the login screen - account names included -
+         * to a directory and then quit the greeter. Only root can set the
+         * greeter's environment, so that crosses no privilege boundary, but a
+         * login screen that exits on an environment variable is not a thing to
+         * ship when nothing needs it: README images are rendered by hand, and
+         * by hand the greeter has to run in test mode anyway. */
         var render_dir = Environment.get_variable ("GREETER_FPRINT_RENDER");
         if (render_dir != null)
-            start_fingerprint_render (render_dir);
+        {
+            if (SlickGreeter.singleton.test_mode)
+                start_fingerprint_render (render_dir);
+            else
+                warning ("GREETER_FPRINT_RENDER is honoured in --test-mode only; ignored");
+        }
 
         align.add (stack);
 

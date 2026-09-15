@@ -119,6 +119,13 @@ Secure Boot state, and handed to `pam_gnome_keyring` by a PAM module.
 [tpm-keyring-unlock](https://github.com/dmitriitimoshenko/tpm-keyring-unlock)
 does exactly that.
 
+Know what that protects before relying on it. The tool is meant for disks that
+are *not* fully encrypted, and there a PCR7-only seal stops someone who pulls
+the disk and reads it in another machine - not someone who takes the whole
+laptop and boots it from a signed live image, which lands on the same PCR7
+value and can unseal the keyring password with no password asked. Details in
+[issue #8](https://github.com/dmitriitimoshenko/tpm-keyring-unlock/issues/8).
+
 On Linux Mint, use this fork of it:
 
     https://github.com/SoulInfernoDE/tpm-keyring-unlock
@@ -148,7 +155,8 @@ dm-tool add-nested-seat --screen 1280x900
 fingerprint state and quits; `doc/states.gif` is assembled from those. The list
 it draws holds the machine's real accounts, not test mode's fixtures - test mode
 is there only to get past the LightDM daemon connection, which a greeter started
-by hand cannot make. `GREETER_FPRINT_RENDER_USER` picks which name is selected,
+by hand cannot make. Outside test mode the variable is ignored, so it can never
+make a real login screen write pictures of itself or quit. `GREETER_FPRINT_RENDER_USER` picks which name is selected,
 and defaults to the invoking user.
 
 ## Configuration
