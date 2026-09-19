@@ -43,6 +43,47 @@ Kommt eine Passwortabfrage, nachdem der Leser gesprochen hat, hat `pam_fprintd`
 seine `max-tries` aufgebraucht; die Box bekommt dann ihre Passwortzeile, genau
 so, wie PAM danach fragt.
 
+## Töne
+
+Jedes Ergebnis eines Scans hat einen kurzen Ton im Stil von Cinnamons eigenen:
+ein steigender Dreiklang, wenn der Finger erkannt wird, eine sanft fallende
+Terz, wenn nicht, und ein neutraler Doppelton, wenn das Passwort gebraucht
+wird. Ein falsches Passwort am Schild bekommt denselben Ton wie ein abgelehnter
+Finger. Das Warten bleibt still. Die Töne folgen dem, was angezeigt wird; ein
+Zustand, der hinter einem Aufblitzen wartet, ist also zusammen mit seiner Farbe
+zu hören.
+
+Es sind gewöhnliche slick-greeter-Einstellungen wie `play-ready-sound`: eine
+Tondatei pro Zustand, ab Werk an, still wenn leer. Um einen abzuschalten, trage
+ihn leer in `/etc/lightdm/slick-greeter.conf` ein:
+
+```ini
+[Greeter]
+play-fingerprint-failure-sound=
+```
+
+| Schlüssel | Spielt, wenn |
+| --- | --- |
+| `play-fingerprint-success-sound` | der Finger erkannt wird |
+| `play-fingerprint-failure-sound` | der Finger nicht erkannt wird oder das Passwort am Schild falsch ist |
+| `play-fingerprint-password-sound` | der Leser aufgegeben hat und das Passwort gebraucht wird |
+
+Der Anmeldebildschirm nutzt eigene Kopien, 14 dB lauter, unter
+`/usr/share/greeter-fprint/sounds/login-screen/`. Er läuft als Benutzer
+`lightdm`, dessen Audiositzung keine gespeicherte Lautstärke hat; WirePlumber
+öffnet das Gerät deshalb mit seiner Voreinstellung von etwa −24 dB – mit den
+gewöhnlichen Dateien waren die Töne rund 18 dB leiser als im Sperrbildschirm.
+Die Verstärkung steckt bewusst in den Dateien und nicht in der
+Wiedergabelautstärke: WirePlumber merkt sich die Lautstärke eines Streams pro
+Medienrolle, und alle Ereignistöne teilen sich eine Rolle – ein einziger
+verstärkter Stream hätte also alle späteren Ereignistöne mit verstärkt. Mehr als
+14 dB gehen nicht, ohne dass es verzerrt; der Anmeldebildschirm bleibt deshalb
+ein paar dB leiser als deine eigene Sitzung.
+
+Die Dateien sind aus Cinnamons Tönen `plug`, `unplug` und `notification`
+abgeleitet; wie, zeigt [`DEVELOPMENT.de.md`](DEVELOPMENT.de.md), die
+Namensnennung steht in [COPYRIGHT.md](../COPYRIGHT.md) (englisch).
+
 ## Meldungen
 
 PAM-Meldungen tragen keine Kennung, woher sie stammen. Die Anzeige erkennt die

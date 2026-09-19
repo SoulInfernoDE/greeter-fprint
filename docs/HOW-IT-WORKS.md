@@ -41,6 +41,45 @@ The password state is driven by PAM, not by counting attempts. A password prompt
 arriving after the reader has been talking means `pam_fprintd` used up its
 `max-tries`; the box then grows its password row, exactly as PAM asks for it.
 
+## Sounds
+
+Each result of a scan has a short sound in the style of Cinnamon's own: a
+rising three-note chime when the finger is recognised, a gentle falling third
+when it is not, and a neutral double tone when the password is needed. A wrong
+password typed at the sign gets the same sound as a rejected finger. Waiting
+stays silent. Sounds follow what is shown, so a state queued behind a flash is
+heard together with its colour.
+
+They are ordinary slick-greeter settings, like `play-ready-sound`: one sound
+file per state, on by default, silent when empty. To switch one off, add it
+empty to `/etc/lightdm/slick-greeter.conf`:
+
+```ini
+[Greeter]
+play-fingerprint-failure-sound=
+```
+
+| Key | Plays when |
+| --- | --- |
+| `play-fingerprint-success-sound` | the finger is recognised |
+| `play-fingerprint-failure-sound` | the finger is not recognised, or the password typed at the sign is wrong |
+| `play-fingerprint-password-sound` | the reader gave up and the password is needed |
+
+The login screen uses its own copies, 14 dB louder, in
+`/usr/share/greeter-fprint/sounds/login-screen/`. The greeter runs as the
+`lightdm` user, whose audio session has no saved volume, so WirePlumber opens
+the device at its default of about −24 dB — with the ordinary files the sounds
+came out roughly 18 dB quieter than on the lock screen. The gain sits in the
+files rather than in the playback volume on purpose: WirePlumber remembers a
+stream's volume per media role, and every event sound shares one role, so a
+single boosted stream would leave all later event sounds boosted too. 14 dB is
+as far as it goes without clipping, so the login screen stays a few dB quieter
+than your own session.
+
+The files are derived from Cinnamon's `plug`, `unplug` and `notification`
+sounds; [`DEVELOPMENT.md`](DEVELOPMENT.md) shows how, and
+[COPYRIGHT.md](../COPYRIGHT.md) carries their attribution.
+
 ## Messages
 
 PAM messages carry no marker saying where they came from, so the panel

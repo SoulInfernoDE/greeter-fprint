@@ -33,7 +33,8 @@ greeter-fprint gibt dem Leser eine eigene Anzeige unter der Benutzerliste:
 | **Grün** | Finger erkannt – die Sitzung startet |
 | **Passwort-Schild** | der Leser hat aufgegeben; gib dein Passwort ein |
 
-Der Name des gewählten Benutzers leuchtet in derselben Farbe mit. Immer nur eine
+Der Name des gewählten Benutzers leuchtet in derselben Farbe mit, und jedes
+Ergebnis hat einen kurzen Ton im Stil von Cinnamon. Immer nur eine
 Meldung, übersetzt: Deutsch ist vollständig, in anderen Sprachen fallen die
 Meldungen des Lesers auf Englisch zurück.
 

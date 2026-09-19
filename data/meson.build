@@ -35,6 +35,24 @@ install_data(
 )
 
 install_data(
+    [
+        'sounds/fingerprint-success.oga',
+        'sounds/fingerprint-failure.oga',
+        'sounds/fingerprint-password.oga',
+    ],
+    install_dir: pkgdatadir / 'sounds',
+)
+
+install_data(
+    [
+        'sounds/login-screen/fingerprint-success.oga',
+        'sounds/login-screen/fingerprint-failure.oga',
+        'sounds/login-screen/fingerprint-password.oga',
+    ],
+    install_dir: pkgdatadir / 'sounds' / 'login-screen',
+)
+
+install_data(
     'x.dm.slick-greeter.gschema.xml',
     install_dir: datadir / 'glib-2.0' / 'schemas',
 )

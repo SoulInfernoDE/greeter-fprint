@@ -118,6 +118,18 @@
       <default>''</default>
       <summary>A sound file to play when the greeter is ready</summary>
     </key>
+    <key name="play-fingerprint-success-sound" type="s">
+      <default>'/usr/share/greeter-fprint/sounds/login-screen/fingerprint-success.oga'</default>
+      <summary>A sound file to play when a fingerprint is recognised</summary>
+    </key>
+    <key name="play-fingerprint-failure-sound" type="s">
+      <default>'/usr/share/greeter-fprint/sounds/login-screen/fingerprint-failure.oga'</default>
+      <summary>A sound file to play when a fingerprint is not recognised, or the password typed after the reader gave up</summary>
+    </key>
+    <key name="play-fingerprint-password-sound" type="s">
+      <default>'/usr/share/greeter-fprint/sounds/login-screen/fingerprint-password.oga'</default>
+      <summary>A sound file to play when the fingerprint reader gives up and the password is needed</summary>
+    </key>
     <key name="hidden-users" type="as">
       <default>[]</default>
       <summary>List of usernames that are hidden until a special key combination is hit</summary>

@@ -46,6 +46,9 @@ public class UGSettings
     public const string KEY_HIGH_CONTRAST = "high-contrast";
     public const string KEY_SCREEN_READER = "screen-reader";
     public const string KEY_PLAY_READY_SOUND = "play-ready-sound";
+    public const string KEY_PLAY_FINGERPRINT_SUCCESS_SOUND = "play-fingerprint-success-sound";
+    public const string KEY_PLAY_FINGERPRINT_FAILURE_SOUND = "play-fingerprint-failure-sound";
+    public const string KEY_PLAY_FINGERPRINT_PASSWORD_SOUND = "play-fingerprint-password-sound";
     public const string KEY_HIDDEN_USERS = "hidden-users";
     public const string KEY_GROUP_FILTER = "group-filter";
     public const string KEY_ENABLE_HIDPI = "enable-hidpi";
@@ -132,6 +135,9 @@ public class UGSettings
             string_keys.append (KEY_CURSOR_THEME_NAME);
             string_keys.append (KEY_FONT_NAME);
             string_keys.append (KEY_PLAY_READY_SOUND);
+            string_keys.append (KEY_PLAY_FINGERPRINT_SUCCESS_SOUND);
+            string_keys.append (KEY_PLAY_FINGERPRINT_FAILURE_SOUND);
+            string_keys.append (KEY_PLAY_FINGERPRINT_PASSWORD_SOUND);
             string_keys.append (KEY_XFT_HINTSTYLE);
             string_keys.append (KEY_XFT_RGBA);
             string_keys.append (KEY_ENABLE_HIDPI);

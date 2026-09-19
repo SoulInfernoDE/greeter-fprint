@@ -64,3 +64,32 @@ dieselbe Weise aus diesen Bildern: Ausschnitt 420×550 bei
 und Floyd-Steinberg-Dithering (ohne das bekommt das Hintergrundbild harte
 Farbstufen), und die Dauern aus dem Code – 2,4 s Warten, 1,5 s Rot, 1,6 s
 Warten, 1,5 s Grün, 1,6 s Warten, 1,8 s Schild.
+
+## Die Töne
+
+```bash
+tools/derive-fingerprint-sounds.py
+```
+
+Baut `data/sounds/` aus Cinnamons eigenem Tonsatz unter
+`/usr/share/mint-artwork/sounds` neu: `plug` plus ein dritter Ton für
+„erkannt", `unplug` mit fallender Terz statt Quinte für „nicht erkannt" und
+`notification`, auf einen neutralen Doppelton abgesenkt, für das Passwort. Jedes
+Ergebnis wird auf die Spitze von `plug.oga` gebracht, und jeder Abschnitt, der
+mitten in einem Klang beginnt, bekommt 6 ms Einblenden, damit keine Übergänge
+knacken. Braucht ffmpeg mit dem Filter `rubberband` und `python3-numpy`.
+
+Es schreibt zwei Sätze: `data/sounds/` in Cinnamons Lautstärke für den
+Sperrbildschirm und `data/sounds/login-screen/` 14 dB lauter für den
+Anmeldebildschirm, dessen Audiositzung mit WirePlumbers niedriger
+Grundlautstärke beginnt.
+
+Um den Anmeldebildschirm die Töne ohne echte Anmeldung spielen zu hören, starte
+die Demo mit dem frisch gebauten Schema, denn dem installierten fehlen die
+Schlüssel noch:
+
+```bash
+mkdir -p /tmp/schema && cp data/x.dm.slick-greeter.gschema.xml /tmp/schema/
+glib-compile-schemas /tmp/schema
+GSETTINGS_SCHEMA_DIR=/tmp/schema GREETER_FPRINT_DEMO=1 ./build/src/greeter-fprint --test-mode
+```

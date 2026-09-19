@@ -31,7 +31,8 @@ greeter-fprint gives the reader a panel of its own under the user list:
 | **Green** | finger recognised — the session starts |
 | **Password sign** | the reader gave up; type your password |
 
-The selected user's name glows in the same colour. One message at a time,
+The selected user's name glows in the same colour, and each result has a short
+sound in Cinnamon's style. One message at a time,
 translated: German is complete, and in other languages the reader's messages
 fall back to English.
 

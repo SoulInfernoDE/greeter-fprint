@@ -61,3 +61,30 @@ scale to 380 px wide, one shared 256-colour palette with Floyd–Steinberg
 dithering (without it the wallpaper posterises), and the durations from the
 code — 2.4 s waiting, 1.5 s red, 1.6 s waiting, 1.5 s green, 1.6 s waiting,
 1.8 s sign.
+
+## The sounds
+
+```bash
+tools/derive-fingerprint-sounds.py
+```
+
+Rebuilds `data/sounds/` from Cinnamon's own sound set in
+`/usr/share/mint-artwork/sounds`: `plug` plus a third note for success,
+`unplug` with a falling third instead of its fifth for failure, and
+`notification` lowered to a neutral double tone for the password. Each result
+is scaled to `plug.oga`'s peak, and every segment that starts inside a sound
+gets a 6 ms fade-in so no join clicks. Needs ffmpeg with the `rubberband`
+filter and `python3-numpy`.
+
+It writes two sets: `data/sounds/` at Cinnamon's level for the lock screen,
+and `data/sounds/login-screen/` 14 dB louder for the login screen, whose audio
+session starts at WirePlumber's low default volume.
+
+To hear the greeter play them without a real login, run the demo with the
+freshly built schema, since the installed one does not have the keys yet:
+
+```bash
+mkdir -p /tmp/schema && cp data/x.dm.slick-greeter.gschema.xml /tmp/schema/
+glib-compile-schemas /tmp/schema
+GSETTINGS_SCHEMA_DIR=/tmp/schema GREETER_FPRINT_DEMO=1 ./build/src/greeter-fprint --test-mode
+```

@@ -1048,6 +1048,15 @@ public abstract class GreeterList : FadableBox
         {
             if (prompted)
             {
+                /* A wrong password typed at the fingerprint panel's sign is the
+                 * same attempt the finger was part of, so it sounds like a
+                 * rejected finger - rejected is rejected. It has to happen
+                 * here: start_authentication() below clears fingerprint_active.
+                 * A login that never involved the reader keeps upstream's
+                 * silence. */
+                if (fingerprint_active && FingerprintPanel.instance != null)
+                    SlickGreeter.singleton.play_fingerprint_sound (UGSettings.KEY_PLAY_FINGERPRINT_FAILURE_SOUND);
+
                 /* Show an error if one wasn't provided */
                 if (will_clear)
                     show_message (_("Invalid password, please try again"), true);

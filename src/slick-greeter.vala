@@ -309,6 +309,32 @@ public class SlickGreeter
         return false;
     }
 
+    /* Plays the sound file a settings key names, the way ready_cb() plays
+     * play-ready-sound: an empty key means silence. Used by the fingerprint
+     * panel, which can change state before the greeter is ready - hence the
+     * context is created here if ready_cb() has not run yet.
+     *
+     * No volume is passed on purpose. The login screen needs its sounds
+     * louder than the lock screen (see data/sounds/login-screen), but a
+     * stream volume is the wrong tool for that: WirePlumber saves it per
+     * media role, and every canberra sound shares the one role, so a single
+     * boosted fingerprint sound left all later event sounds boosted too -
+     * the ready sound included. The gain lives in the files instead. */
+    public void play_fingerprint_sound (string key)
+    {
+        var sound_file = UGSettings.get_string (key);
+        if (sound_file == "")
+            return;
+
+        if (canberra_context == null)
+            Canberra.Context.create (out canberra_context);
+
+        debug ("Playing %s", sound_file);
+        var result = canberra_context.play (0, Canberra.PROP_MEDIA_FILENAME, sound_file);
+        if (result != 0)
+            debug ("Could not play %s (canberra error %d)", sound_file, result);
+    }
+
     public void show ()
     {
         debug ("Showing main window");

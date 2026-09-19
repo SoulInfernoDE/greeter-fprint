@@ -244,6 +244,7 @@ public class FingerprintPanel : Gtk.Box
             pending_text = "";
         }
 
+        var previous_state = state;
         state = new_state;
         message_label.set_text (text);
 
@@ -259,6 +260,21 @@ public class FingerprintPanel : Gtk.Box
 
         show ();
         message_label.visible = text != "";
+
+        /* Sound follows what is shown, not what arrives: a state queued behind
+         * a flash is heard when it appears, together with its colour. WAITING
+         * is the reader's resting state and stays silent, or every re-arm
+         * would chime. A repeated failure sounds again - the user did
+         * something new - while success and the password sign sound once. */
+        if (SlickGreeter.singleton != null)
+        {
+            if (state == FingerprintState.FAILED)
+                SlickGreeter.singleton.play_fingerprint_sound (UGSettings.KEY_PLAY_FINGERPRINT_FAILURE_SOUND);
+            else if (state == FingerprintState.SUCCESS && previous_state != state)
+                SlickGreeter.singleton.play_fingerprint_sound (UGSettings.KEY_PLAY_FINGERPRINT_SUCCESS_SOUND);
+            else if (state == FingerprintState.PASSWORD && previous_state != state)
+                SlickGreeter.singleton.play_fingerprint_sound (UGSettings.KEY_PLAY_FINGERPRINT_PASSWORD_SOUND);
+        }
 
         if (state == FingerprintState.WAITING)
             start_pulse ();

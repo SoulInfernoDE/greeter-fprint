@@ -49,6 +49,25 @@ The directory is named after this fork rather than after slick-greeter, so the
 two can be installed side by side. Renaming a directory changes nothing about
 the licence of what is in it.
 
+## Fingerprint sounds — attribution required
+
+The three sounds in `data/sounds/`, and their louder copies for the login screen
+in `data/sounds/login-screen/`, are derived from Linux Mint's Cinnamon sound
+set, whose files are **CC-BY-4.0**:
+
+    Files: data/sounds/*
+           data/sounds/login-screen/*
+    Copyright: 2022 Google (the original plug, unplug and notification sounds,
+               shipped by Linux Mint in mint-artwork)
+               2026 soul-inferno <nofunction@gmx.net> (the derivation)
+    License: CC-BY-4.0
+
+Changes made: segments cut from `plug.oga`, `unplug.oga` and
+`notification.oga`, pitch-shifted, layered into new note sequences, faded and
+level-matched; the login-screen copies are additionally raised by 14 dB. `tools/derive-fingerprint-sounds.py` performs every step, so the
+changes are documented exactly. License text:
+<https://creativecommons.org/licenses/by/4.0/>.
+
 ## Tux
 
 `data/tux-fprint.svg` is an original drawing, not traced from or derived from
@@ -78,6 +97,7 @@ This is a one-way grant from the copyright holder of those parts
 (soul-inferno <nofunction@gmx.net>) and cannot reach further than that. It does
 not touch upstream slick-greeter's code, which stays with its own copyright
 holders under GPL-3, and it does not lift the CC-BY-3.0 attribution requirement
-on the session badges, which is not ours to waive.
+on the session badges or the CC-BY-4.0 attribution on the fingerprint sounds,
+neither of which is ours to waive.
 
 Everyone else has the GPL-3, which is the licence of the fork as a whole.
