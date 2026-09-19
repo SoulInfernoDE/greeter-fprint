@@ -322,6 +322,9 @@ msgstr "Kein Fingerabdruck hinterlegt"
 msgid "Password not recognised"
 msgstr "Passwort nicht erkannt"
 
+msgid "Password accepted"
+msgstr "Passwort akzeptiert"
+
 # Autostart entry of the session sounds companion
 msgid "Fingerprint sounds"
 msgstr "Fingerabdruck-Töne"

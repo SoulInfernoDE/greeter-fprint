@@ -21,8 +21,9 @@ Schild also „Mot de passe :“, ohne dass etwas einzustellen wäre:
 
 ## Von diesem Fork hinzugefügt – bisher nur Deutsch
 
-25 Texte: die 15 Sätze der Anzeige („Fingerprint not recognised“, „Place your %s
-on the reader“, …) und die 10 Fingernamen, die in zwei davon eingesetzt werden.
+28 Texte: die 16 Sätze der Anzeige („Fingerprint not recognised“, „Place your %s
+on the reader“, …), die 10 Fingernamen, die in zwei davon eingesetzt werden, und
+die 2 Zeilen des Autostart-Eintrags für die Töne in der Sitzung.
 Sie stehen am Ende von `po/de.po` unter dem Kommentar
 `greeter-fprint: fingerprint panel`. In allen anderen Sprachen fallen sie auf
 Englisch zurück – korrekt, aber ein halbfertiges Bild: Auf einem französischen

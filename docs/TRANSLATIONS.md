@@ -19,8 +19,9 @@ on a French system that sign reads "Mot de passe :" with nothing to configure:
 
 ## Added by this fork — German only so far
 
-25 strings: the panel's 15 sentences ("Fingerprint not recognised", "Place your
-%s on the reader", …) and the 10 finger names inserted into two of them. They
+28 strings: the panel's 16 sentences ("Fingerprint not recognised", "Place your
+%s on the reader", …), the 10 finger names inserted into two of them, and the
+2 lines of the session sounds' autostart entry. They
 sit at the bottom of `po/de.po` under a `greeter-fprint: fingerprint panel`
 comment. In every other language they fall back to English — correct, but a
 half-finished picture: on a French system the sign speaks French and the message

@@ -1019,7 +1019,12 @@ public abstract class GreeterList : FadableBox
                 fingerprint_login_pending = true;
 
                 var panel = FingerprintPanel.instance;
-                panel.show_success (_("Fingerprint recognised"));
+                /* The green flash confirms whichever credential got the user
+                 * in. A prompt means the reader had already given up, so PAM
+                 * can only have accepted a typed password - announcing
+                 * "Fingerprint recognised" for that was simply wrong. */
+                panel.show_success (prompted ? _("Password accepted")
+                                             : _("Fingerprint recognised"));
                 panel.success_finished.connect (fingerprint_success_finished_cb);
                 return;
             }
