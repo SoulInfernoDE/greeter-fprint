@@ -101,8 +101,10 @@ Each of them is also available in German; the link sits at the top of each.
 
 ## Related
 
-[screensaver-fprint](https://github.com/SoulInfernoDE/screensaver-fprint) — the
-same panel for the Cinnamon lock screen.
+- [screensaver-fprint](https://github.com/SoulInfernoDE/screensaver-fprint) — the
+  same panel for the Cinnamon lock screen
+- [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)
+  — the same colours for Cinnamon's authentication dialog (`pkexec`, polkit)
 
 ## For Linux Mint
 

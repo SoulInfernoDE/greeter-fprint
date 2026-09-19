@@ -105,8 +105,10 @@ Alle gibt es auch auf Englisch; der Link steht jeweils oben.
 
 ## Verwandt
 
-[screensaver-fprint](https://github.com/SoulInfernoDE/screensaver-fprint) –
-dieselbe Anzeige für den Cinnamon-Sperrbildschirm.
+- [screensaver-fprint](https://github.com/SoulInfernoDE/screensaver-fprint) –
+  dieselbe Anzeige für den Cinnamon-Sperrbildschirm
+- [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)
+  – dieselben Farben für Cinnamons Legitimierungsdialog (`pkexec`, polkit)
 
 ## Für Linux Mint
 
