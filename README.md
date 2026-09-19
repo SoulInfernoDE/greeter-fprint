@@ -32,7 +32,8 @@ greeter-fprint gives the reader a panel of its own under the user list:
 | **Password sign** | the reader gave up; type your password |
 
 The selected user's name glows in the same colour, and each result has a short
-sound in Cinnamon's style. One message at a time,
+sound in Cinnamon's style - which then also plays for `sudo` in a terminal and
+for authentication dialogs in your session. One message at a time,
 translated: German is complete, and in other languages the reader's messages
 fall back to English.
 
@@ -55,7 +56,7 @@ sudo apt install valac meson libgtk-3-dev liblightdm-gobject-1-dev libcanberra-d
 ```bash
 git clone https://github.com/SoulInfernoDE/greeter-fprint.git
 cd greeter-fprint
-meson setup build
+meson setup build --prefix=/usr
 ninja -C build
 sudo ninja -C build install
 printf '[Seat:*]\ngreeter-session=greeter-fprint\n' | sudo tee /etc/lightdm/lightdm.conf.d/80-greeter-fprint.conf

@@ -83,3 +83,11 @@ executable(
     c_args: c_args,
     vala_args: vala_args,
 )
+
+install_data(
+    'session_sounds.py',
+    rename: 'greeter-fprint-session-sounds',
+    install_dir: get_option('libexecdir') / 'greeter-fprint',
+    install_mode: 'rwxr-xr-x',
+)
+

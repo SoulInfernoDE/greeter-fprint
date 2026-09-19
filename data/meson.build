@@ -70,3 +70,22 @@ man_files = [
 ]
 
 install_man(man_files)
+
+# The session companion: plays the panel's sounds for fingerprint prompts in
+# the user's own session - sudo in a terminal, authentication dialogs - by
+# listening to fprintd on the system bus. See src/session_sounds.py.
+session_sounds_desktop = configure_file(
+    input: 'greeter-fprint-session-sounds.desktop.in.in',
+    output: 'greeter-fprint-session-sounds.desktop.in',
+    configuration: {'LIBEXECDIR': prefix / get_option('libexecdir')},
+)
+
+i18n.merge_file(
+    input: session_sounds_desktop,
+    output: 'greeter-fprint-session-sounds.desktop',
+    type: 'desktop',
+    po_dir: meson.source_root() / 'po',
+    install: true,
+    install_dir: get_option('sysconfdir') / 'xdg' / 'autostart',
+)
+

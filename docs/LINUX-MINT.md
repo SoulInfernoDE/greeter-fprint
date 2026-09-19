@@ -85,12 +85,15 @@ change that. This fork translates the messages itself, which is why it works.
 ## Waiting longer for a finger
 
 `pam_fprintd`'s `timeout=` is the wait before PAM falls through to the password.
-Its minimum is 10 seconds; there is no documented maximum.
+The default is 30 seconds, the minimum 10 - and the maximum **99**: pam_fprintd
+only accepts a value of at most two digits and *silently ignores* anything
+longer, so `timeout=120` quietly leaves you at 30. Everything after a `#` on
+the line is a comment to PAM, so arguments there do nothing either.
 
 ```bash
 sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak-$(date +%Y%m%d%H%M%S)
-sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=120/' /etc/pam.d/common-auth
-sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=120/' /usr/share/pam-configs/fingwit
+sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=99/' /etc/pam.d/common-auth
+sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=99/' /usr/share/pam-configs/fingwit
 ```
 
 The second line keeps a future `pam-auth-update` from reverting the first.

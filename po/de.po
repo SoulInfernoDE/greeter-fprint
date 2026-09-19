@@ -321,3 +321,11 @@ msgstr "Kein Fingerabdruck hinterlegt"
 
 msgid "Password not recognised"
 msgstr "Passwort nicht erkannt"
+
+# Autostart entry of the session sounds companion
+msgid "Fingerprint sounds"
+msgstr "Fingerabdruck-Töne"
+
+msgid "Plays a short sound when a fingerprint is recognised or rejected, in terminals and authentication dialogs"
+msgstr "Spielt einen kurzen Ton, wenn ein Fingerabdruck erkannt oder abgelehnt wird – im Terminal und in Legitimierungsdialogen"
+

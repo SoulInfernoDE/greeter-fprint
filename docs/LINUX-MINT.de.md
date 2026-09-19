@@ -89,12 +89,16 @@ es.
 ## Länger auf den Finger warten
 
 `timeout=` von `pam_fprintd` ist die Wartezeit, bevor PAM zur Passwortabfrage
-weitergeht. Das Minimum sind 10 Sekunden; ein Maximum ist nicht dokumentiert.
+weitergeht. Voreingestellt sind 30 Sekunden, das Minimum sind 10 – und das
+Maximum **99**: pam_fprintd nimmt nur Werte mit höchstens zwei Ziffern an und
+*ignoriert* längere stillschweigend; `timeout=120` lässt dich also unbemerkt bei
+30. Alles hinter einem `#` in der Zeile ist für PAM ein Kommentar, Argumente dort
+wirken also ebenfalls nicht.
 
 ```bash
 sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak-$(date +%Y%m%d%H%M%S)
-sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=120/' /etc/pam.d/common-auth
-sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=120/' /usr/share/pam-configs/fingwit
+sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=99/' /etc/pam.d/common-auth
+sudo sed -i '/pam_fprintd\.so/ s/timeout=[0-9]*/timeout=99/' /usr/share/pam-configs/fingwit
 ```
 
 Die zweite Zeile verhindert, dass ein späteres `pam-auth-update` die erste

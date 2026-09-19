@@ -84,6 +84,28 @@ Die Dateien sind aus Cinnamons Tönen `plug`, `unplug` und `notification`
 abgeleitet; wie, zeigt [`DEVELOPMENT.de.md`](DEVELOPMENT.de.md), die
 Namensnennung steht in [COPYRIGHT.md](../COPYRIGHT.md) (englisch).
 
+## Im Terminal und in Dialogen
+
+Dieselben Töne spielen bei jeder Fingerabdruck-Abfrage in deiner eigenen
+Sitzung: `sudo`, `su` und `pkexec` im Terminal und Cinnamons
+Legitimierungsdialoge. Keines dieser Programme wird verändert. Sie prüfen alle
+über `fprintd`, und `fprintd` meldet jeden Schritt auf dem Systembus – ein kleiner
+Begleiter, der mit der Sitzung startet, hört sie also alle mit:
+`greeter-fprint-session-sounds`, unter „Startprogramme“ als „Fingerabdruck-Töne“.
+
+Ein Detail entscheidet, was er spielt. `fprintd` meldet auch eine *gestoppte*
+Prüfung als „kein Treffer“ – ein abgebrochenes `sudo` oder einen Leser, dem die
+Zeit ausgegangen ist. Eine Ablehnung zählt deshalb nur, wenn vorher wirklich ein
+Finger auf dem Sensor lag. Ein Stopp ohne Finger nach Ablauf von `pam_fprintd`s
+Wartezeit heißt: Jetzt kommt das Passwort. Ein früherer ist ein Abbruch und
+bleibt still. Eine Aufzeichnung echter Abfragen, die `tests/session-sounds/`
+abspielt, hält diese Regeln ehrlich.
+
+Er bleibt still, solange der Bildschirm gesperrt ist (der Sperrbildschirm spielt
+die Töne selbst), solange eine andere Sitzung vorne ist und wenn in Cinnamon
+**Klang → Benachrichtigungen anzeigen** aus ist. Ein falsches *Passwort* hat hier
+keinen Ton: Das Urteil fällt `pam_unix`, und das meldet nichts.
+
 ## Meldungen
 
 PAM-Meldungen tragen keine Kennung, woher sie stammen. Die Anzeige erkennt die

@@ -34,7 +34,8 @@ greeter-fprint gibt dem Leser eine eigene Anzeige unter der Benutzerliste:
 | **Passwort-Schild** | der Leser hat aufgegeben; gib dein Passwort ein |
 
 Der Name des gewählten Benutzers leuchtet in derselben Farbe mit, und jedes
-Ergebnis hat einen kurzen Ton im Stil von Cinnamon. Immer nur eine
+Ergebnis hat einen kurzen Ton im Stil von Cinnamon – der dann auch bei `sudo` im
+Terminal und bei Legitimierungsdialogen in deiner Sitzung erklingt. Immer nur eine
 Meldung, übersetzt: Deutsch ist vollständig, in anderen Sprachen fallen die
 Meldungen des Lesers auf Englisch zurück.
 
@@ -58,7 +59,7 @@ sudo apt install valac meson libgtk-3-dev liblightdm-gobject-1-dev libcanberra-d
 ```bash
 git clone https://github.com/SoulInfernoDE/greeter-fprint.git
 cd greeter-fprint
-meson setup build
+meson setup build --prefix=/usr
 ninja -C build
 sudo ninja -C build install
 printf '[Seat:*]\ngreeter-session=greeter-fprint\n' | sudo tee /etc/lightdm/lightdm.conf.d/80-greeter-fprint.conf

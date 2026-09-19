@@ -88,3 +88,16 @@ mkdir -p /tmp/schema && cp data/x.dm.slick-greeter.gschema.xml /tmp/schema/
 glib-compile-schemas /tmp/schema
 GSETTINGS_SCHEMA_DIR=/tmp/schema GREETER_FPRINT_DEMO=1 ./build/src/greeter-fprint --test-mode
 ```
+
+## Session sounds
+
+```bash
+python3 tests/session-sounds/test_session_sounds.py
+```
+
+Replays `tests/session-sounds/fprintd-trace.txt` - `fprintd`'s signals, recorded
+during real `sudo` and `pkexec` prompts - through the rules in
+`src/session_sounds.py`, and checks the timeout parsing against
+`pam_fprintd`'s own rules. To record a new trace, subscribe to everything
+`net.reactivated.Fprint` sends on the system bus and log it with timestamps;
+the test's line format is the one `fprintd-trace.txt` uses.

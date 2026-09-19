@@ -80,6 +80,27 @@ The files are derived from Cinnamon's `plug`, `unplug` and `notification`
 sounds; [`DEVELOPMENT.md`](DEVELOPMENT.md) shows how, and
 [COPYRIGHT.md](../COPYRIGHT.md) carries their attribution.
 
+## In the terminal and in dialogs
+
+The same sounds play for every fingerprint prompt in your own session: `sudo`,
+`su` and `pkexec` in a terminal, and Cinnamon's authentication dialogs. None of
+them is changed. They all verify through `fprintd`, and `fprintd` announces
+every step on the system bus, so a small companion started with the session -
+`greeter-fprint-session-sounds`, listed under Startup Applications as
+"Fingerprint sounds" - hears all of them.
+
+One detail decides what it plays. `fprintd` reports a *stopped* verification as
+"no match" too - a cancelled `sudo`, or the reader running out of time - so a
+rejection only counts if a finger was actually on the sensor first. A stop
+without a finger after `pam_fprintd`'s timeout means the password is next; an
+earlier one is a cancel and stays silent. A recording of real prompts,
+replayed by `tests/session-sounds/`, keeps those rules honest.
+
+It stays silent while the screen is locked (the lock screen plays these itself),
+while another session is in front, and when Cinnamon's **Sound → Showing
+notifications** is off. A wrong *password* has no sound here: that verdict comes
+from `pam_unix`, which announces nothing.
+
 ## Messages
 
 PAM messages carry no marker saying where they came from, so the panel

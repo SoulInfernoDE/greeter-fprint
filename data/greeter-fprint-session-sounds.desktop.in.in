@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Fingerprint sounds
+Comment=Plays a short sound when a fingerprint is recognised or rejected, in terminals and authentication dialogs
+Exec=@LIBEXECDIR@/greeter-fprint/greeter-fprint-session-sounds
+Icon=fingerprint
+OnlyShowIn=X-Cinnamon;
+X-GNOME-Autostart-Phase=Applications
