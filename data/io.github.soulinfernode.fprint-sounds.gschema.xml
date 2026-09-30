@@ -6,8 +6,11 @@
   sound applet and System Settings (cinnamon-extension-fprint). Installed
   system-wide, so every user has it; the value itself is per user.
 
-  Not used at the login screen: nobody is logged in there yet, and the greeter
-  keeps its own play-fingerprint-*-sound keys in x.dm.slick-greeter.
+  The login screen cannot read a user's settings - it runs as lightdm, before
+  anyone is logged in - so greeter-fprint-session-sounds keeps a copy of the
+  percent in LightDM's per-user greeter data directory
+  ($XDG_GREETER_DATA_DIR/fprint-sounds-volume), and the greeter reads it for
+  whoever is logging in.
 -->
 <schemalist gettext-domain="greeter-fprint">
   <schema id="io.github.soulinfernode.fprint-sounds" path="/io/github/soulinfernode/fprint-sounds/">

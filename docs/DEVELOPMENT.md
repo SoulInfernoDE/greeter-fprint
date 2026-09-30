@@ -101,3 +101,8 @@ during real `sudo` and `pkexec` prompts - through the rules in
 `pam_fprintd`'s own rules. To record a new trace, subscribe to everything
 `net.reactivated.Fprint` sends on the system bus and log it with timestamps;
 the test's line format is the one `fprintd-trace.txt` uses.
+
+`GREETER_FPRINT_TEST_SHARED_DIR=<dir>` stands in for LightDM's per-user greeter
+data directory in test mode, where there is no daemon to ask: put a
+`fprint-sounds-volume` file there to see the login screen play at that level
+(`--test-mode` logs "Playing … at 30 % (-31 dB)" with `G_MESSAGES_DEBUG=all`).

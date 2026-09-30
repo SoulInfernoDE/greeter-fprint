@@ -107,8 +107,8 @@ Every user has a **Fingerprint sounds** slider of their own, in the sound applet
 on the panel (from [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)).
 It is stored in `io.github.soulinfernode.fprint-sounds volume`, a GSettings
 schema this project installs system-wide, and it applies to every fingerprint
-sound in the session: the lock screen, `sudo` and `pkexec` in a terminal, and
-authentication dialogs. 0 % silences them.
+sound: the login screen, the lock screen, `sudo` and `pkexec` in a terminal,
+and authentication dialogs. 0 % silences them.
 
 The sounds play under a media role of their own, `fingerprint`. Canberra plays
 event sounds under the role `event`, which PipeWire files as `Notification` -
@@ -122,8 +122,17 @@ The percent is converted like PulseAudio's own - cubic, so 50 % is −18 dB - an
 into whole decibels, because libcanberra reads `canberra.volume` with
 `strtod()`, which follows the locale: `"-6.0"` is invalid under German.
 
-The login screen is not affected: nobody is logged in there yet, so it keeps
-its own `play-fingerprint-*-sound` keys and its louder copies.
+The login screen cannot read a user's settings: it runs as the `lightdm` user,
+before anyone is logged in. LightDM has a place for exactly this - a directory
+per user, `/var/lib/lightdm-data/<user>`, owned by the user and group
+`lightdm`, mode 0770, known to the session as `$XDG_GREETER_DATA_DIR`. The
+session sounds companion keeps the current percent there in
+`fprint-sounds-volume`, rewritten whenever the slider moves. The greeter asks
+LightDM for the directory of whoever is logging in and reads it, defensively,
+since the file is the user's: opened without following symlinks, a regular file
+of a few bytes only, and nothing but one to three digits accepted. Anything
+else - including a user who has not logged in since installing - means 100 %.
+100 % leaves the login screen's louder copies of the sounds as they are.
 
 ## Messages
 

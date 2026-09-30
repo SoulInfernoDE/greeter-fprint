@@ -49,7 +49,9 @@ other users' sessions verify through the same fprintd).
 
 The level is the user's "Fingerprint sounds" slider, in the sound applet and in
 System Settings, stored in io.github.soulinfernode.fprint-sounds; 0 % means
-silent. The sounds play under a media role of their own, so the slider and
+silent. This helper also hands the level to the login screen: it keeps it in
+$XDG_GREETER_DATA_DIR/fprint-sounds-volume, LightDM's per-user directory for
+leaving something for the greeter, which reads it for whoever is logging in. The sounds play under a media role of their own, so the slider and
 Cinnamon's "Sounds volume" do not move each other.
 """
 
@@ -103,6 +105,28 @@ def volume_db(percent):
     if percent <= 0:
         return None
     return int(round(60 * math.log10(min(percent, 100) / 100)))
+
+
+GREETER_VOLUME_FILE = "fprint-sounds-volume"
+
+
+def share_with_greeter(percent, directory=None):
+    """Leaves the level for the login screen in LightDM's per-user greeter data
+    directory. Written to a temporary file and renamed, so the greeter never
+    reads half a number, and made readable (0644) because the file's group is
+    the user's own, not lightdm - the directory's 0770 already keeps everyone
+    else out. Returns the path written, or None where there is no such
+    directory (not a LightDM session)."""
+    directory = directory or os.environ.get("XDG_GREETER_DATA_DIR")
+    if not directory or not os.path.isdir(directory):
+        return None
+    path = os.path.join(directory, GREETER_VOLUME_FILE)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="ascii") as f:
+        f.write(str(max(0, min(int(percent), 100))))
+    os.chmod(tmp, 0o644)
+    os.replace(tmp, path)
+    return path
 
 
 def pam_fprintd_timeout(path=PAM_CONFIG):
@@ -258,6 +282,19 @@ def main():
 
     tracker = Tracker(SessionPlayer(), pam_fprintd_timeout())
     bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
+
+    source = Gio.SettingsSchemaSource.get_default()
+    if source is not None and source.lookup(VOLUME_SCHEMA, True) is not None:
+        volume = Gio.Settings(schema_id=VOLUME_SCHEMA)
+
+        def share(*args):
+            try:
+                share_with_greeter(volume.get_int("volume"))
+            except Exception:
+                sys.stderr.write(traceback.format_exc())
+
+        volume.connect("changed::volume", share)
+        share()
 
     def on_signal(conn, sender, path, iface, name, params):
         try:

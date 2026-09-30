@@ -106,3 +106,9 @@ aufgezeichnet bei echten `sudo`- und `pkexec`-Abfragen – durch die Regeln in
 von `pam_fprintd`. Für eine neue Aufzeichnung alles abonnieren, was
 `net.reactivated.Fprint` auf dem Systembus sendet, und mit Zeitstempeln
 mitschreiben; das Zeilenformat des Tests ist das von `fprintd-trace.txt`.
+
+`GREETER_FPRINT_TEST_SHARED_DIR=<ordner>` ersetzt im Testmodus, wo es keinen
+Dienst zum Fragen gibt, das Datenverzeichnis von LightDM pro Benutzer: Lege dort
+eine Datei `fprint-sounds-volume` ab, um den Anmeldebildschirm in dieser
+Lautstärke spielen zu sehen (`--test-mode` protokolliert mit
+`G_MESSAGES_DEBUG=all` „Playing … at 30 % (-31 dB)“).

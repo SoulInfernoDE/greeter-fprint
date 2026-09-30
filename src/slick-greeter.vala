@@ -309,28 +309,121 @@ public class SlickGreeter
         return false;
     }
 
+    /* The user's "Fingerprint sounds" level reaches the login screen through
+     * LightDM's per-user greeter data directory - /var/lib/lightdm-data/<user>,
+     * XDG_GREETER_DATA_DIR in the session, user:lightdm 0770 - the place LightDM
+     * provides for a session to leave something for the greeter. The session's
+     * greeter-fprint-session-sounds keeps the current percent in this file. */
+    private const string FINGERPRINT_VOLUME_FILE = "fprint-sounds-volume";
+
+    /* The sounds' own media role, as in the session and on the lock screen: a
+     * canberra "event" is PipeWire's "Notification", whose volume WirePlumber
+     * remembers - one boosted sound once left every later event sound boosted.
+     * Under a role of their own, the volume passed here stays theirs. */
+    private const string FINGERPRINT_MEDIA_ROLE = "fingerprint";
+
+    /* The percent the user whose login this is has set, or 100 where there is
+     * none to be had: no one selected yet, never logged in since installing,
+     * or anything unexpected. The file is the user's, so it is read
+     * defensively - opened without following symlinks, a regular file only,
+     * at most a few bytes, and nothing but one to three digits accepted. */
+    private int fingerprint_volume_percent ()
+    {
+        string? dir = null;
+        if (test_mode)
+        {
+            /* Development aid: test mode has no daemon to ask. */
+            dir = Environment.get_variable ("GREETER_FPRINT_TEST_SHARED_DIR");
+        }
+        else
+        {
+            var user = greeter.authentication_user;
+            if (user == null)
+                return 100;
+            try
+            {
+                dir = greeter.ensure_shared_data_dir_sync (user);
+            }
+            catch (Error e)
+            {
+                debug ("No greeter data directory for %s: %s", user, e.message);
+                return 100;
+            }
+        }
+        if (dir == null)
+            return 100;
+        return read_volume_file (Path.build_filename (dir, FINGERPRINT_VOLUME_FILE));
+    }
+
+    private static int read_volume_file (string path)
+    {
+        var fd = Posix.open (path, Posix.O_RDONLY | Posix.O_NOFOLLOW | Posix.O_CLOEXEC);
+        if (fd < 0)
+            return 100;
+
+        var text = "";
+        Posix.Stat st;
+        if (Posix.fstat (fd, out st) == 0 && Posix.S_ISREG (st.st_mode) && st.st_size <= 8)
+        {
+            var buf = new uint8[9];
+            var n = Posix.read (fd, buf, 8);
+            if (n > 0)
+            {
+                buf[n] = 0;
+                text = ((string) buf).strip ();
+            }
+        }
+        Posix.close (fd);
+
+        if (text.length < 1 || text.length > 3)
+        {
+            debug ("Ignoring %s: not a percent", path);
+            return 100;
+        }
+        for (var i = 0; i < text.length; i++)
+        {
+            if (!text[i].isdigit ())
+            {
+                debug ("Ignoring %s: not a percent", path);
+                return 100;
+            }
+        }
+        return int.min (int.parse (text), 100);
+    }
+
     /* Plays the sound file a settings key names, the way ready_cb() plays
      * play-ready-sound: an empty key means silence. Used by the fingerprint
      * panel, which can change state before the greeter is ready - hence the
      * context is created here if ready_cb() has not run yet.
      *
-     * No volume is passed on purpose. The login screen needs its sounds
-     * louder than the lock screen (see data/sounds/login-screen), but a
-     * stream volume is the wrong tool for that: WirePlumber saves it per
-     * media role, and every canberra sound shares the one role, so a single
-     * boosted fingerprint sound left all later event sounds boosted too -
-     * the ready sound included. The gain lives in the files instead. */
+     * The level is the selected user's slider, as whole decibels: libcanberra
+     * reads canberra.volume with strtod(), which follows the locale, and
+     * "-6.0" is invalid in German - that once silenced every fingerprint sound
+     * here. The conversion is cubic like PulseAudio's percentages, the same as
+     * in the session and on the lock screen; 100 % leaves the login screen's
+     * louder copies as they are. */
     public void play_fingerprint_sound (string key)
     {
         var sound_file = UGSettings.get_string (key);
         if (sound_file == "")
             return;
 
+        var percent = fingerprint_volume_percent ();
+        if (percent <= 0)
+        {
+            debug ("Fingerprint sounds set to 0 %%, not playing %s", sound_file);
+            return;
+        }
+        var gain = "%d".printf ((int) Math.round (60.0 * Math.log10 (percent / 100.0)));
+
         if (canberra_context == null)
             Canberra.Context.create (out canberra_context);
 
-        debug ("Playing %s", sound_file);
-        var result = canberra_context.play (0, Canberra.PROP_MEDIA_FILENAME, sound_file);
+        debug ("Playing %s at %d %% (%s dB)", sound_file, percent, gain);
+        var result = canberra_context.play (0,
+                                            Canberra.PROP_MEDIA_FILENAME, sound_file,
+                                            Canberra.PROP_MEDIA_ROLE, FINGERPRINT_MEDIA_ROLE,
+                                            Canberra.PROP_CANBERRA_VOLUME, gain);
         if (result != 0)
             debug ("Could not play %s (canberra error %d)", sound_file, result);
     }

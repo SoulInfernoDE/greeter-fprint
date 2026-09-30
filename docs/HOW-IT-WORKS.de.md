@@ -114,8 +114,8 @@ Lautstärke-Applet der Leiste (aus
 [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)).
 Er wird in `io.github.soulinfernode.fprint-sounds volume` gespeichert, einem
 GSettings-Schema, das dieses Projekt systemweit installiert, und gilt für jeden
-Fingerabdruck-Ton in der Sitzung: den Sperrbildschirm, `sudo` und `pkexec` im
-Terminal und Legitimierungsdialoge. 0 % schaltet sie stumm.
+Fingerabdruck-Ton: den Anmeldebildschirm, den Sperrbildschirm, `sudo` und
+`pkexec` im Terminal und Legitimierungsdialoge. 0 % schaltet sie stumm.
 
 Die Töne spielen unter einer eigenen Medienrolle, `fingerprint`. Canberra spielt
 Ereignistöne unter der Rolle `event`, die PipeWire als `Notification` führt – die
@@ -130,9 +130,19 @@ Die Prozentzahl wird umgerechnet wie bei PulseAudio – kubisch, 50 % sind also
 −18 dB – und in ganze Dezibel, weil libcanberra `canberra.volume` mit `strtod()`
 liest, das der Spracheinstellung folgt: `"-6.0"` ist unter Deutsch ungültig.
 
-Der Anmeldebildschirm ist davon nicht betroffen: Dort ist noch niemand
-angemeldet; er behält seine eigenen Schlüssel `play-fingerprint-*-sound` und
-seine lauteren Kopien.
+Der Anmeldebildschirm kann die Einstellungen eines Benutzers nicht lesen: Er
+läuft als Benutzer `lightdm`, bevor jemand angemeldet ist. Für genau diesen Fall
+hat LightDM einen Platz – ein Verzeichnis pro Benutzer,
+`/var/lib/lightdm-data/<name>`, das dem Benutzer und der Gruppe `lightdm` gehört,
+Modus 0770, in der Sitzung als `$XDG_GREETER_DATA_DIR` bekannt. Der Begleiter für
+die Töne in der Sitzung legt dort in `fprint-sounds-volume` die aktuelle
+Prozentzahl ab und schreibt sie neu, sobald sich der Regler bewegt. Der Greeter
+fragt LightDM nach dem Verzeichnis dessen, der sich gerade anmeldet, und liest die
+Datei vorsichtig, denn sie gehört dem Benutzer: ohne symbolischen Links zu folgen,
+nur eine gewöhnliche Datei von wenigen Bytes, und nichts außer ein bis drei
+Ziffern wird angenommen. Alles andere – auch ein Benutzer, der sich seit der
+Installation nicht angemeldet hat – heißt 100 %. Bei 100 % bleiben die lauteren
+Kopien des Anmeldebildschirms, wie sie sind.
 
 ## Meldungen
 

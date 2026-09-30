@@ -33,7 +33,8 @@ greeter-fprint gives the reader a panel of its own under the user list:
 
 The selected user's name glows in the same colour, and each result has a short
 sound in Cinnamon's style - which then also plays for `sudo` in a terminal and
-for authentication dialogs in your session. One message at a time,
+for authentication dialogs in your session. How loud is each user's own slider,
+from [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint). One message at a time,
 translated: German is complete, and in other languages the reader's messages
 fall back to English.
 

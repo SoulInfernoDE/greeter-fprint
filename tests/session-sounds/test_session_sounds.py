@@ -81,6 +81,22 @@ def test_volume_db():
     assert all(isinstance(ss.volume_db(p), int) for p in range(1, 101))
 
 
+def test_share_with_greeter():
+    with tempfile.TemporaryDirectory() as d:
+        path = ss.share_with_greeter(37, d)
+        assert open(path).read() == "37"
+        assert oct(os.stat(path).st_mode & 0o777) == "0o644"
+        # A symlink in its place is replaced, never written through.
+        target = os.path.join(d, "elsewhere")
+        open(target, "w").write("keep")
+        os.remove(path); os.symlink(target, path)
+        ss.share_with_greeter(150, d)
+        assert not os.path.islink(path) and open(path).read() == "100"
+        assert open(target).read() == "keep"
+        assert not os.path.exists(path + ".tmp")
+    assert ss.share_with_greeter(50, "/nonexistent") is None
+
+
 def test_pam_timeout_parsing():
     cases = {
         "auth [success=2 default=ignore] pam_fprintd.so timeout=120 # debug max-tries=3 timeout=900\n": 30,

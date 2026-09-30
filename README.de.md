@@ -35,7 +35,9 @@ greeter-fprint gibt dem Leser eine eigene Anzeige unter der Benutzerliste:
 
 Der Name des gewählten Benutzers leuchtet in derselben Farbe mit, und jedes
 Ergebnis hat einen kurzen Ton im Stil von Cinnamon – der dann auch bei `sudo` im
-Terminal und bei Legitimierungsdialogen in deiner Sitzung erklingt. Immer nur eine
+Terminal und bei Legitimierungsdialogen in deiner Sitzung erklingt. Wie laut,
+bestimmt jeder Benutzer mit seinem eigenen Regler aus
+[cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint). Immer nur eine
 Meldung, übersetzt: Deutsch ist vollständig, in anderen Sprachen fallen die
 Meldungen des Lesers auf Englisch zurück.
 
