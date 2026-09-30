@@ -102,9 +102,37 @@ bleibt still. Eine Aufzeichnung echter Abfragen, die `tests/session-sounds/`
 abspielt, hält diese Regeln ehrlich.
 
 Er bleibt still, solange der Bildschirm gesperrt ist (der Sperrbildschirm spielt
-die Töne selbst), solange eine andere Sitzung vorne ist und wenn in Cinnamon
-**Klang → Benachrichtigungen anzeigen** aus ist. Ein falsches *Passwort* hat hier
-keinen Ton: Das Urteil fällt `pam_unix`, und das meldet nichts.
+die Töne selbst) und solange eine andere Sitzung vorne ist, und spielt in der
+Lautstärke des Reglers **Fingerabdruck-Töne** – siehe unten. Ein falsches
+*Passwort* hat hier keinen Ton: Das Urteil fällt `pam_unix`, und das meldet
+nichts.
+
+## Lautstärke
+
+Jeder Benutzer hat einen eigenen Regler **Fingerabdruck-Töne** im
+Lautstärke-Applet der Leiste (aus
+[cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)).
+Er wird in `io.github.soulinfernode.fprint-sounds volume` gespeichert, einem
+GSettings-Schema, das dieses Projekt systemweit installiert, und gilt für jeden
+Fingerabdruck-Ton in der Sitzung: den Sperrbildschirm, `sudo` und `pkexec` im
+Terminal und Legitimierungsdialoge. 0 % schaltet sie stumm.
+
+Die Töne spielen unter einer eigenen Medienrolle, `fingerprint`. Canberra spielt
+Ereignistöne unter der Rolle `event`, die PipeWire als `Notification` führt – die
+Rolle, die Cinnamons **Lautstärke der Klänge** steuert und unter der WirePlumber
+Stream-Lautstärken speichert. Eine gemeinsame Rolle hieß: Der eine Regler bewegte
+den anderen, und ein verstärkter Fingerabdruck-Ton hat einmal alle späteren
+Mitteilungen mit verstärkt. Gemessen an einem stummen Ausgang unter deutscher
+Spracheinstellung: −20, 0, −20 und −6 dB kommen genau so an, und die von
+WirePlumber gespeicherte `Notification`-Lautstärke bleibt unberührt.
+
+Die Prozentzahl wird umgerechnet wie bei PulseAudio – kubisch, 50 % sind also
+−18 dB – und in ganze Dezibel, weil libcanberra `canberra.volume` mit `strtod()`
+liest, das der Spracheinstellung folgt: `"-6.0"` ist unter Deutsch ungültig.
+
+Der Anmeldebildschirm ist davon nicht betroffen: Dort ist noch niemand
+angemeldet; er behält seine eigenen Schlüssel `play-fingerprint-*-sound` und
+seine lauteren Kopien.
 
 ## Meldungen
 

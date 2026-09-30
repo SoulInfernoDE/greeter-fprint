@@ -44,11 +44,16 @@ would be wrong for those. So:
   no-match without a finger, earlier    cancelled - silent
 
 Silent while the screen is locked (cinnamon-screensaver plays these sounds
-itself), while this session is not the one in front (the login screen and
-other users' sessions verify through the same fprintd), and when Cinnamon's
-"Showing notifications" sound is off - the rule the lock screen follows too.
+itself) and while this session is not the one in front (the login screen and
+other users' sessions verify through the same fprintd).
+
+The level is the user's "Fingerprint sounds" slider, in the sound applet and in
+System Settings, stored in io.github.soulinfernode.fprint-sounds; 0 % means
+silent. The sounds play under a media role of their own, so the slider and
+Cinnamon's "Sounds volume" do not move each other.
 """
 
+import math
 import os
 import sys
 import time
@@ -59,6 +64,14 @@ FAILURE = "fingerprint-failure.oga"
 PASSWORD = "fingerprint-password.oga"
 
 SOUND_DIR = "/usr/share/greeter-fprint/sounds"
+
+# The fingerprint sounds' own volume setting and media role. Canberra plays
+# event sounds under the role "event", which PipeWire files as "Notification":
+# the role Cinnamon's "Sounds volume" slider controls, and the key WirePlumber
+# remembers stream volumes under. A role of their own keeps the two sliders -
+# and the two remembered volumes - apart. The lock screen uses the same two.
+VOLUME_SCHEMA = "io.github.soulinfernode.fprint-sounds"
+MEDIA_ROLE = "fingerprint"
 PAM_CONFIG = "/etc/pam.d/common-auth"
 
 # pam_fprintd 1.94's own values (pam/pam_fprintd.c).
@@ -76,6 +89,20 @@ RETRY_DEBOUNCE = 1.5
 
 RETRY_RESULTS = ("verify-retry-scan", "verify-swipe-too-short",
                  "verify-finger-not-centered", "verify-remove-and-retry")
+
+
+def volume_db(percent):
+    """The slider's percent as the whole-decibel gain canberra.volume takes,
+    or None for silence.
+
+    Cubic, like PulseAudio's own volume percentages, so the slider behaves like
+    the desktop's other volume sliders: 50 % is -18 dB. Whole decibels only:
+    libcanberra parses canberra.volume with strtod(), which follows
+    LC_NUMERIC, and "-6.0" is invalid under a German locale.
+    """
+    if percent <= 0:
+        return None
+    return int(round(60 * math.log10(min(percent, 100) / 100)))
 
 
 def pam_fprintd_timeout(path=PAM_CONFIG):
@@ -193,11 +220,11 @@ class SessionPlayer:
         except Exception:
             return False
 
-    def _sounds_enabled(self):
+    def _volume_percent(self):
         source = self.Gio.SettingsSchemaSource.get_default()
-        if source is None or source.lookup("org.cinnamon.sounds", True) is None:
-            return True                     # not Cinnamon: nothing says no
-        return self.Gio.Settings(schema_id="org.cinnamon.sounds").get_boolean("notification-enabled")
+        if source is None or source.lookup(VOLUME_SCHEMA, True) is None:
+            return 100                      # schema not installed: full level
+        return self.Gio.Settings(schema_id=VOLUME_SCHEMA).get_int("volume")
 
     @staticmethod
     def _variant(fmt, value):
@@ -206,7 +233,8 @@ class SessionPlayer:
 
     def __call__(self, name):
         try:
-            if not self._sounds_enabled() or self._screen_locked() or not self._session_active():
+            gain = volume_db(self._volume_percent())
+            if gain is None or self._screen_locked() or not self._session_active():
                 return
             path = os.path.join(SOUND_DIR, name)
             if not os.path.exists(path):
@@ -218,7 +246,9 @@ class SessionPlayer:
                 context = GSound.Context()
                 context.init(None)
                 self.context = context
-            self.context.play_simple({"media.filename": path}, None)
+            self.context.play_simple({"media.filename": path,
+                                      "media.role": MEDIA_ROLE,
+                                      "canberra.volume": str(gain)}, None)
         except Exception:
             sys.stderr.write(traceback.format_exc())
 

@@ -53,6 +53,11 @@ install_data(
 )
 
 install_data(
+    'io.github.soulinfernode.fprint-sounds.gschema.xml',
+    install_dir: datadir / 'glib-2.0' / 'schemas',
+)
+
+install_data(
     'x.dm.slick-greeter.gschema.xml',
     install_dir: datadir / 'glib-2.0' / 'schemas',
 )

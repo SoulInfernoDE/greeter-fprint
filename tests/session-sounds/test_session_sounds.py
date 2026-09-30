@@ -70,6 +70,17 @@ def test_gave_up_after_last_try():
     assert played == [ss.FAILURE, ss.PASSWORD], played
 
 
+def test_volume_db():
+    # Cubic like PulseAudio's percentages; whole decibels, because canberra
+    # parses the value with strtod() under the session's LC_NUMERIC.
+    assert ss.volume_db(100) == 0
+    assert ss.volume_db(50) == -18
+    assert ss.volume_db(34) == -28
+    assert ss.volume_db(150) == 0
+    assert ss.volume_db(0) is None and ss.volume_db(-3) is None
+    assert all(isinstance(ss.volume_db(p), int) for p in range(1, 101))
+
+
 def test_pam_timeout_parsing():
     cases = {
         "auth [success=2 default=ignore] pam_fprintd.so timeout=120 # debug max-tries=3 timeout=900\n": 30,

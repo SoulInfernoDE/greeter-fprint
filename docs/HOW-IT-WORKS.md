@@ -96,10 +96,34 @@ without a finger after `pam_fprintd`'s timeout means the password is next; an
 earlier one is a cancel and stays silent. A recording of real prompts,
 replayed by `tests/session-sounds/`, keeps those rules honest.
 
-It stays silent while the screen is locked (the lock screen plays these itself),
-while another session is in front, and when Cinnamon's **Sound → Showing
-notifications** is off. A wrong *password* has no sound here: that verdict comes
-from `pam_unix`, which announces nothing.
+It stays silent while the screen is locked (the lock screen plays these itself)
+and while another session is in front, and plays at the user's **Fingerprint
+sounds** volume - see below. A wrong *password* has no sound here: that verdict
+comes from `pam_unix`, which announces nothing.
+
+## Volume
+
+Every user has a **Fingerprint sounds** slider of their own, in the sound applet
+on the panel (from [cinnamon-extension-fprint](https://github.com/SoulInfernoDE/cinnamon-extension-fprint)).
+It is stored in `io.github.soulinfernode.fprint-sounds volume`, a GSettings
+schema this project installs system-wide, and it applies to every fingerprint
+sound in the session: the lock screen, `sudo` and `pkexec` in a terminal, and
+authentication dialogs. 0 % silences them.
+
+The sounds play under a media role of their own, `fingerprint`. Canberra plays
+event sounds under the role `event`, which PipeWire files as `Notification` -
+the role Cinnamon's **Sounds volume** controls and WirePlumber remembers stream
+volumes under. Sharing it meant one slider moved the other, and a boosted
+fingerprint sound once left every later notification boosted. Measured on a
+null sink under a German locale: −20, 0, −20 and −6 dB arrive exactly as asked,
+and the `Notification` volume WirePlumber keeps stays untouched.
+
+The percent is converted like PulseAudio's own - cubic, so 50 % is −18 dB - and
+into whole decibels, because libcanberra reads `canberra.volume` with
+`strtod()`, which follows the locale: `"-6.0"` is invalid under German.
+
+The login screen is not affected: nobody is logged in there yet, so it keeps
+its own `play-fingerprint-*-sound` keys and its louder copies.
 
 ## Messages
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The fingerprint sounds' own volume, shared by everything that plays them in a
+  user's session: the lock screen (screensaver-fprint), terminal prompts and
+  authentication dialogs (greeter-fprint-session-sounds), and set from the
+  sound applet and System Settings (cinnamon-extension-fprint). Installed
+  system-wide, so every user has it; the value itself is per user.
+
+  Not used at the login screen: nobody is logged in there yet, and the greeter
+  keeps its own play-fingerprint-*-sound keys in x.dm.slick-greeter.
+-->
+<schemalist gettext-domain="greeter-fprint">
+  <schema id="io.github.soulinfernode.fprint-sounds" path="/io/github/soulinfernode/fprint-sounds/">
+    <key name="volume" type="i">
+      <range min="0" max="100"/>
+      <default>100</default>
+      <summary>Volume of the fingerprint sounds</summary>
+      <description>Percent of the sounds' own level, on the same cubic scale as the desktop's other volume sliders. 0 silences them.</description>
+    </key>
+  </schema>
+</schemalist>
